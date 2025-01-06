@@ -165,13 +165,28 @@ body {
 .calendar-cell.task-day-day .task-indicator .day {
     background-color: #e65100;
 }
-
 .calendar-cell.today {
-    background-color: #ffeb3b; /* Yellow background for today */
-    color: #000; /* Black text color for better contrast */
-    font-weight: bold; /* Optional: Make the current day stand out more */
-    border-radius: 15%; /* Optional: Add rounded corners */
+    background: linear-gradient(315deg, #ffffff, #3a7bd5, #00d2ff);
+    color: #ffffff; /* White text for optimal contrast */
+    font-weight: 600; /* Semi-bold text for emphasis */
+    border-radius: 10px; /* Moderate rounding for modern design */
+    padding: 12px; /* Balanced padding for a polished look */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Subtle shadow for a touch of depth */
+    transition: transform 0.2s ease, background 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions for hover and focus effects */
 }
+
+/* Hover effect: Subtle gradient shift and interactive scaling */
+.calendar-cell.today:hover {
+    transform: scale(1.05); /* Slight scale for interactivity */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Enhanced shadow for hover depth */
+}
+
+/* Focus effect: Professional glow for accessibility */
+.calendar-cell.today:focus {
+    box-shadow: 0 0 15px rgba(0, 173, 239, 0.6); /* Cyan glow for focus state */
+    outline: none; /* Remove default focus outline */
+}
+
 /* Modal Overlay */
 .modal {
     display: none;
@@ -308,10 +323,17 @@ body {
     overflow-y: auto;  /* Allow scrolling if content overflows */
 }
 
-h3 {
-    font-size: 20px;
-    margin-bottom: 10px;
+.todo-header h3, .consolidated-header h3 {
+    font-size: 18px; /* Slightly larger text */
+    font-weight: bold; /* Emphasize the heading */
+    text-align: center; /* Center the heading */
+    color: #333; /* Darker text color for contrast */
+    margin-bottom: 10px; /* Space below the heading */
+    padding-bottom: 10px; /* Add padding for separation */
+    border-bottom: 2px solid #ddd; /* Add a partition below the heading */
 }
+
+
 
 .task-list {
     height: 100%;
@@ -368,7 +390,7 @@ h3 {
 }
 
 /* Priority Styles with Gradients and Soft Effects */
-.consolidated-task-item.highly-important {
+.consolidated-task-item.high {
     background: linear-gradient(135deg, #ff6b6b, #ff8e42); /* Gradient for Highly Important */
     color: white;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
@@ -376,7 +398,7 @@ h3 {
     padding: 10px;
 }
 
-.consolidated-task-item.medium-important {
+.consolidated-task-item.medium {
     background: linear-gradient(135deg, #80e27e, #64b5f6); /* Gradient for Medium Important */
     color: white;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
