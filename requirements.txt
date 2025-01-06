@@ -1,0 +1,16 @@
+asgiref
+dj-database-url
+Django
+djangorestframework
+djongo
+dnspython
+et-xmlfile
+gunicorn
+openpyxl
+packaging
+psycopg2-binary
+pymongo
+sqlparse
+typing_extensions
+whitenoise
+python-decouple

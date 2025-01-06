@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  django:
+    image: user_monitor_app  # This is your Django image
+    container_name: django_monitor_app-new
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    environment:
+      - DATABASE_NAME=personal_monitor
+      - DATABASE_USER=master
+      - DATABASE_PASSWORD=imfreaked@008
+      - DATABASE_HOST=postgres  # The service name of the PostgreSQL container
+      - DATABASE_PORT=5432
+    networks:
+      - user_monitor_network
+
+  postgres:
+    image: postgres:latest  # Official PostgreSQL image
+    container_name: monitor-postgres-new
+    environment:
+      POSTGRES_DB: personal_monitor
+      POSTGRES_USER: master
+      POSTGRES_PASSWORD: imfreaked@008
+    ports:
+      - "5432:5432"
+    networks:
+      - user_monitor_network
+
+networks:
+  user_monitor_network:
+    driver: bridge
+

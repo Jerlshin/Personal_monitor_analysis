@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    {% load static %} <!-- Load static files -->
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #eef2f3, #8e9eab); /* Gradient background */
+            background-size: cover;
+            background-position: center;
+            color: #333;
+            padding: 20px;
+        }
+
+        /* Main Content Container */
+        .main-container {
+            max-width: 600px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(220, 235, 245, 0.8), rgba(200, 220, 235, 0.8));
+            margin: 0 auto;
+            padding: 40px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        /* Button Styles */
+        .button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            margin: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+        }
+
+        .button--primary {
+            background: linear-gradient(90deg, #007bff, #0056b3);
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.5);
+        }
+
+        .button--primary:hover {
+            background: linear-gradient(90deg, #0056b3, #004085);
+            transform: translateY(-2px);
+        }
+
+        .button--secondary {
+            background: linear-gradient(90deg, #6c757d, #5a6268);
+            color: white;
+            box-shadow: 0 4px 10px rgba(108, 117, 125, 0.5);
+        }
+
+        .button--secondary:hover {
+            background: linear-gradient(90deg, #5a6268, #4e555b);
+            transform: translateY(-2px);
+        }
+
+        .button--logout {
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .button--logout:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(231, 76, 60, 0.5);
+        }
+
+        .button--download {
+            background: linear-gradient(90deg, #28a745, #218838);
+            color: white;
+            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.5);
+        }
+
+        .button--download:hover {
+            background: linear-gradient(90deg, #218838, #1e7e34);
+            transform: translateY(-2px);
+        }
+
+        /* Quotes Section Styles */
+        .quotes-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .quote-card {
+            background: linear-gradient(145deg, rgba(231, 243, 254, 0.9), rgba(255, 255, 255, 0.9));
+            border-left: 6px solid #007bff;
+            padding: 25px 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1), 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+            position: relative;
+        }
+
+        .quote-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15), 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .quote-text {
+            font-style: italic;
+            color: #333;
+            font-family: 'Georgia', serif;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            line-height: 1.6;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+            margin: 0;
+            padding: 10px 20px;
+            position: relative;
+        }
+
+        .quote-text::before {
+            content: '“';
+            font-size: 2.5rem;
+            position: absolute;
+            left: -10px;
+            top: -10px;
+            color: #007bff;
+        }
+
+        .quote-text::after {
+            content: '”';
+            font-size: 2.5rem;
+            position: absolute;
+            right: -10px;
+            bottom: -10px;
+            color: #007bff;
+        }
+
+        /* User Quote Card Styles */
+        .user-quote-card {
+            background: linear-gradient(145deg, rgba(231, 247, 222, 0.9), rgba(255, 255, 255, 0.9));
+            border-left: 6px solid #28a745;
+            padding: 35px 35px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+            text-align: left;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .user-quote-card .quote-text {
+            font-style: italic;
+            color: #333;
+            font-family: 'Georgia', serif;
+            font-weight: 600;
+            letter-spacing: 1px;
+            line-height: 1.7;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.15);
+            margin: 0;
+            padding: 10px 20px;
+            position: relative;
+            text-align: center;
+        }
+        .user-quote-card .quote-text::before,
+        .user-quote-card .quote-text::after {
+            content: none; /* Remove the quotation marks */
+        }
+
+        .user-quote-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-quote-card .quote-text:hover {
+            color: #28a745;
+            font-style: normal;
+        }
+
+        /* Add Quote Section */
+        .add-quote-container {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(230, 247, 255, 0.9)); /* Slightly lighter gradient */
+            justify-content: space-between;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 12px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+            width: 100%;
+            max-width: 98%;
+        }
+
+        .life-lessons-text {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #28a745;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 3px;
+            text-align: center;
+            line-height: 1.4;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #28a745, #6cbb5b);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .quote-form {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50%;
+        }
+
+        .add-quote-container textarea {
+            width: 100%;
+            max-width: 800px;
+            height: 60px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 1rem;
+            margin-right: 15px;
+            resize: none;
+        }
+
+        .add-quote-container button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(90deg, #007bff, #0056b3);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            min-width: 120px;
+        }
+
+        .add-quote-container button:hover {
+            background: linear-gradient(90deg, #0056b3, #004085);
+            transform: translateY(-2px);
+        }
+
+        .masonry-quotes {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 cards per row */
+            gap: 20px; /* Spacing between cards */
+            padding: 20px;
+        }
+        .delete-button {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        
+        .delete-button:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(231, 76, 60, 0.5);
+        }
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .add-quote-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .life-lessons-text {
+                flex-basis: 100%;
+                margin-bottom: 10px;
+            }
+
+            .quote-form {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .add-quote-container textarea {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+
+            .add-quote-container button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <h1>Welcome, {{ user.username }}</h1>
+
+        <button class="button button--primary" onclick="window.location.href='{% url 'input' %}'">Go to Input Page</button>
+        <button class="button button--secondary" onclick="window.location.href='{% url 'chart' %}'">Go to Chart Page</button>
+
+        <button class="button button--download" id="download-btn">Download Data</button>
+
+        <button class="button button--secondary" onclick="window.location.href='{% url 'calendar' %}'">Go to Calendar Page</button>
+
+        <br>
+        <button class="button button--logout" onclick="window.location.href='{% url 'logout' %}'">Logout</button>
+    </div>
+
+    <div class="quotes-grid">
+        <div class="quote-card">
+            <p class="quote-text">The only way to do great work is to love what you do.</p>
+        </div>
+        <div class="quote-card">
+            <p class="quote-text">Discipline is the bridge between goals and accomplishment.</p>
+        </div>
+        <div class="quote-card">
+            <p class="quote-text">Success is not the key to happiness. Happiness is the key to success. If you love what you are doing, you will be successful.</p>
+        </div>
+        <div class="quote-card">
+            <p class="quote-text">Your life does not get better by chance, it gets better by change.</p>
+        </div>
+        <div class="quote-card">
+            <p class="quote-text">Believe you can and you're halfway there.</p>
+        </div>
+        <div class="quote-card">
+            <p class="quote-text">For I know the plans I have for you, plans to prosper you and not to harm you, plans to give you hope and a future.</p>
+        </div>
+        <div class="quote-card">
+            <p class="quote-text">I can do all things through Christ who strengthens me.</p>
+        </div>
+        <div class="quote-card">
+            <p class="quote-text">Trust in the Lord with all your heart and lean not on your own understanding.</p>
+        </div>
+        <div class="quote-card">
+            <p class="quote-text">And we know that in all things God works for the good of those who love him.</p>
+        </div>
+        <div class="quote-card">
+            <p class="quote-text">The Lord is my shepherd; I shall not want.</p>
+        </div>
+    </div>
+
+    <div class="add-quote-container">
+        <div class="life-lessons-text">... My Life Lessons</div>
+        <form method="POST" class="quote-form">
+            {% csrf_token %}
+            <textarea name="text" placeholder="Add a new quote..." required></textarea>
+            <button type="submit">Add Quote</button>
+        </form>
+    </div>
+
+
+
+    <div class="masonry-quotes">
+        {% for quote in quotes %}
+        <div class="quote-card user-quote-card">
+            <p class="quote-text">{{ quote.text }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    <script>
+        function confirmDelete(quoteId) {
+            if (confirm("Are you sure you want to delete this quote?")) {
+                fetch(`/delete-quote/${quoteId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}' // Include CSRF token
+                    },
+                    body: JSON.stringify({ id: quoteId })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Remove the quote card from the DOM
+                        document.querySelector(`.user-quote-card[data-id="${quoteId}"]`).remove();
+                    } else {
+                        alert("Failed to delete the quote. Please try again.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error deleting the quote:", error);
+                    alert("An error occurred. Please try again.");
+                });
+            }
+        }
+    </script>
+    
+    <!-- JavaScript to handle confirmation dialog -->
+    <script>
+        document.getElementById("download-btn").addEventListener("click", function() {
+            if (confirm("Are you sure you want to download the Excel file with all inputs?")) {
+                window.location.href = "{% url 'download_excel' %}";
+            }
+        });
+    </script>
+
+</body>
+</html>
