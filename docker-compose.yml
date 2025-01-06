@@ -1,9 +1,8 @@
-version: '3.8'
-
 services:
   django-app:
-    build:
-      context: .  # Path to your Django project
+    # build:
+    #  context: .  # Path to your Django project
+    image: user_monitoring-django-app:latest  # Use the latest image built
     container_name: unique-django-app  # Unique container name for Django
     command: python manage.py runserver 0.0.0.0:8000
     ports:
