@@ -128,21 +128,7 @@ WSGI_APPLICATION = "user_monitoring.wsgi.application"
 # """
 
 # """
-"""
-DATABASES = {
-    'default': {
-        'ENGINE': 'djongo',
-        'NAME': 'user_monitoring_db',  # The name of your MongoDB database
-        'CLIENT': {
-            'host': 'mongodb://localhost:27017',  # MongoDB URI (replace with your URI if hosted elsewhere)
-            'username': '',  # Add username if authentication is enabled
-            'password': '',  # Add password if authentication is enabled
-            'authSource': '',  # Optional: set the database to authenticate against
-            'authMechanism': 'SCRAM-SHA-1',  # Optional: authentication mechanism (default is fine)
-        }
-    }
-}
-"""
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

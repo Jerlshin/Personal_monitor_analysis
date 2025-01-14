@@ -9,6 +9,20 @@ body {
     background: linear-gradient(to right, #eef2f3, #8e9eab); /* Subtle gradient */
 }
 
+/* Mobile View */
+@media (max-width: 768px) {
+    body {
+        padding: 15px;
+    }
+}
+
+/* Small Screen (Mobile) View */
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+}
+
 .home-button, .logout-button {
     position: fixed;
     top: 20px;
@@ -20,6 +34,25 @@ body {
     transition: background-color 0.3s ease, transform 0.1s ease;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
+/* Mobile View */
+@media (max-width: 768px) {
+    .home-button, .logout-button {
+        top: 15px;
+        padding: 10px 15px;
+        font-size: 0.9em;
+    }
+}
+
+/* Small Screen (Mobile) View */
+@media (max-width: 480px) {
+    .home-button, .logout-button {
+        top: 10px;
+        padding: 8px 12px;
+        font-size: 0.8em;
+    }
+}
+
 .home-button {
     position: fixed;
     top: 20px;
@@ -84,6 +117,14 @@ body {
     padding: 20px;
     width: 80%;
     margin-top: 10px;
+}
+
+/* Small Screen (Mobile) View */
+@media (max-width: 480px) {
+    .calendar-container {
+        width: 100%;
+        padding: 15px;
+    }
 }
 
 .calendar-header {
@@ -215,6 +256,21 @@ body {
     transform: translateY(-30px);
     position: relative;
 }
+/* Mobile View */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        padding: 30px;
+    }
+}
+
+/* Very Small Screen (Mobile) View */
+@media (max-width: 480px) {
+    .modal-content {
+        width: 100%;
+        padding: 20px;
+    }
+}
 
 .modal-content h3 {
     font-size: 20px;
@@ -240,6 +296,28 @@ body {
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
     background-color: #f9f9f9;
 }
+
+/* Mobile View */
+@media (max-width: 768px) {
+    .modal-content input[type="text"] {
+        padding: 10px;
+        font-size: 14px;
+    }
+}
+
+/* Very Small Screen (Mobile) View */
+@media (max-width: 480px) {
+    .modal-content input[type="text"] {
+        padding: 8px;
+        font-size: 12px;
+    }
+
+    button[type="submit"] {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+}
+
 
 .modal-content input[type="text"]:focus {
     border-color: #007bff;
@@ -311,6 +389,22 @@ body {
     margin-top: 20px; /* Adjust spacing if necessary */
 }
 
+/* Mobile View */
+@media (max-width: 768px) {
+    .bottom-container {
+        flex-direction: column;
+        height: auto;
+        width: 100%;
+    }
+}
+
+/* Very Small Screen (Mobile) View */
+@media (max-width: 480px) {
+    .bottom-container {
+        gap: 10px;
+    }
+}
+
 .todo-container, .consolidated-container {
     flex: 1;
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(230, 247, 255, 0.9)); /* Slightly lighter gradient */
@@ -333,6 +427,19 @@ body {
     border-bottom: 2px solid #ddd; /* Add a partition below the heading */
 }
 
+/* Mobile View */
+@media (max-width: 768px) {
+    .todo-container, .consolidated-container {
+        padding: 15px;
+    }
+}
+
+/* Very Small Screen (Mobile) View */
+@media (max-width: 480px) {
+    .todo-container, .consolidated-container {
+        padding: 10px;
+    }
+}
 
 
 .task-list {
@@ -354,6 +461,21 @@ body {
     margin-bottom: 10px;
     border-radius: 8px;
     background-color: #f9f9f9;
+}
+
+/* Mobile View */
+@media (max-width: 768px) {
+    .task-list li {
+        padding: 8px 12px;
+    }
+}
+
+/* Very Small Screen (Mobile) View */
+@media (max-width: 480px) {
+    .task-list li {
+        padding: 6px 10px;
+        font-size: 14px;
+    }
 }
 
 .task-list li button {
@@ -387,6 +509,21 @@ body {
     font-size: 14px;
     font-weight: 500;
     color: #333;
+}
+
+/* Mobile View */
+@media (max-width: 768px) {
+    .consolidated-task-item {
+        padding: 8px 12px;
+    }
+}
+
+/* Very Small Screen (Mobile) View */
+@media (max-width: 480px) {
+    .consolidated-task-item {
+        padding: 6px 10px;
+        font-size: 14px;
+    }
 }
 
 /* Priority Styles with Gradients and Soft Effects */
@@ -486,12 +623,6 @@ body {
     transform: translateY(-50%) translateX(5px);
 }
 
-body {
-    font-family: 'Roboto', sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-}
 
 /* Close all open menus when clicking outside */
 .document-click {
