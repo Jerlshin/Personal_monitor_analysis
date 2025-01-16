@@ -272,6 +272,178 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 10px rgba(231, 76, 60, 0.5);
         }
+
+        /* Modal background and transition */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1000; /* Ensure it's on top of all other elements */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(220, 235, 245, 0.9), rgba(200, 220, 235, 0.8)); /* Darker gradient */
+            padding-top: 50px; /* Adjusted for better vertical centering */
+            transition: opacity 0.5s ease-out, background-color 0.3s ease; /* Smooth fade-in and background transition */
+        }
+
+
+        /* Modal content with soft entry animation */
+        .modal-content {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(240, 245, 255, 0.9));
+            margin: 5% auto;
+            padding: 30px;
+            width: 85%;
+            max-width: 600px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transform: translateY(-50px); /* Start slightly off-screen */
+            opacity: 0; /* Initially invisible */
+            animation: fadeInModal 0.5s ease-out forwards; /* Smooth fade-in and slide-in */
+        }
+
+        /* Keyframes for modal fade and slide-in */
+        @keyframes fadeInModal {
+            0% {
+                opacity: 0;
+                transform: translateY(-50px); /* Start from top */
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0); /* End at its original position */
+            }
+        }
+
+        /* Close button hover effects with smoother transition */
+        .close-btn {
+            color: #333;
+            font-size: 32px;
+            font-weight: bold;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            cursor: pointer;
+            transition: color 0.3s ease, transform 0.2s ease; /* Smooth color and scale transition */
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: #007bff;
+            transform: scale(1.1); /* Slight zoom-in effect */
+        }
+
+        /* Header Styling */
+        .modal h2 {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #28a745; /* Fresh green for titles */
+            font-size: 2rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease; /* Smooth movement on hover */
+        }
+
+        .modal h2:hover {
+            transform: translateX(5px); /* Slight movement to the right on hover */
+        }
+
+       /* Center and Bold the Text */
+        .modal p {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern and clean font */
+            font-size: 1.5rem; /* Slightly larger font size for better readability */
+            font-weight: 700; /* Bold text for emphasis */
+            color: #28a745; /* Green color to align with the theme */
+            text-align: center; /* Center align the text */
+            margin-bottom: 30px; /* Increased bottom margin for better spacing */
+            text-transform: uppercase; /* Uppercase for emphasis */
+            letter-spacing: 3px; /* Increase letter spacing for a more elegant feel */
+            line-height: 1.6; /* Add some line height for readability */
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.15); /* Subtle text shadow for depth */
+            animation: fadeInText 0.8s ease-out; /* Smooth fade-in animation */
+        }
+
+        /* Text fade-in animation */
+        @keyframes fadeInText {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* List styling */
+        .modal ul {
+            list-style-type: none;
+            padding: 0;
+            color: #555;
+            margin-top: 10px;
+        }
+
+        /* List item styling with smooth hover effects */
+        .modal ul li {
+            font-size: 1.1rem;
+            margin: 15px 0;
+            padding-left: 25px;
+            position: relative;
+            font-weight: 500;
+            color: #444;
+            line-height: 1.1;
+            transition: color 0.3s ease, transform 0.3s ease; /* Smooth transition for color and movement */
+        }
+
+        /* Custom bullets with animation */
+        .modal ul li::before {
+            content: '•';
+            font-size: 1.8rem;
+            color: #28a745; /* Green bullet */
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%); /* Centering the bullet vertically */
+            transition: color 0.3s ease, transform 0.3s ease; /* Smooth transition for bullets */
+        }
+
+        /* Hover effects for list items */
+        .modal ul li:hover {
+            color: #007bff; /* Change text color to blue on hover */
+            transform: translateX(10px); /* Slight shift to the right */
+        }
+
+        .modal ul li:hover::before {
+            color: #007bff; /* Bullet color turns blue on hover */
+            transform: translateY(-50%) scale(1.3); /* Scale up the bullet */
+        }
+
+        /* Improved transitions on modal appearance */
+        .modal.open {
+            display: block;
+            opacity: 1;
+            pointer-events: all; /* Enable interactions once modal is visible */
+        }
+        /* Add transition effect for list item highlighting */
+        .modal ul li.highlight {
+            background-color: #e1f7d5; /* Light green background for highlighting */
+            color: #007bff; /* Change text color to blue on highlight */
+            font-weight: 600; /* Slightly bold text to emphasize */
+            transform: scale(1.02); /* Subtle zoom effect for elegance */
+            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2); /* Soft shadow for a glowing effect */
+            border-radius: 8px; /* Softer, more rounded corners */
+            transition: all 0.4s ease-in-out; /* Smooth transition for all properties */
+            padding-left: 20px; /* Slight padding to the left for a shifting effect */
+        }
+
+        /* Optional: Slightly adjust the text style during highlighting */
+        .modal ul li.highlight {
+            color: #007bff; /* Blue text color for highlighted items */
+        }
+
+
         /* Responsive Design */
         @media (max-width: 600px) {
             .add-quote-container {
@@ -315,6 +487,32 @@
         <button class="button button--logout" onclick="window.location.href='{% url 'logout' %}'">Logout</button>
     </div>
 
+    <!-- Modal Structure -->
+    <div id="instructionModal" class="modal">
+        <div class="modal-content">
+            <span id="closeModal" class="close-btn">&times;</span>
+            <h2>Welcome J.G Jerlshin</h2>
+            <p>Live the Life to the Fullest !!</p>
+            <ul>
+                <li>Live everyday on a fresh start.</li>
+                <li>Set your goals for the rest of the day.</li>
+                <li>Do the things you love.</li>
+                <li>Avoid Comparing.</li>
+                <li>Don't be afraid to spend Time Alone.</li>
+                <li>Avoid Gossip.</li>
+                <li>Fall in love with someone.</li>
+                <li>Try new things.</li>
+                <li>Laugh More.</li>
+                <li>Forgive and Forget.</li>
+                <li>Be honest to everyone, especially to yourself.</li>
+                <li>Love yourself. Love others.</li>
+                <li>Love the Life.</li>
+                <li>Be Positive.</li>
+            </ul>
+        </div>
+    </div>
+
+    
     <div class="quotes-grid">
         <div class="quote-card">
             <p class="quote-text">The only way to do great work is to love what you do.</p>
@@ -367,6 +565,27 @@
         {% endfor %}
     </div>
     <script>
+        // Get the modal and close button
+        var modal = document.getElementById("instructionModal");
+        var closeBtn = document.getElementById("closeModal");
+
+        // When the page loads, show the modal
+        window.onload = function() {
+            modal.style.display = "block";
+        };
+
+        // When the user clicks the close button, close the modal
+        closeBtn.onclick = function() {
+            modal.style.display = "none";
+        };
+
+        // If the user clicks anywhere outside the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        };
+
         function confirmDelete(quoteId) {
             if (confirm("Are you sure you want to delete this quote?")) {
                 fetch(`/delete-quote/${quoteId}/`, {
@@ -400,6 +619,40 @@
                 window.location.href = "{% url 'download_excel' %}";
             }
         });
+        document.addEventListener("DOMContentLoaded", function() {
+            // Get all list items in the modal
+            const listItems = document.querySelectorAll(".modal ul li");
+        
+            // Set the interval for highlighting each list item
+            let currentIndex = 0;
+            let loopCount = 0; // Count the number of loops
+            const maxLoops = 5; // Set the maximum number of loops
+        
+            const interval = setInterval(function() {
+                // Remove the highlight from the previous item
+                if (currentIndex > 0) {
+                    listItems[currentIndex - 1].classList.remove("highlight");
+                }
+        
+                // Add the highlight class to the current list item
+                listItems[currentIndex].classList.add("highlight");
+        
+                // Move to the next item
+                currentIndex++;
+        
+                // If we have highlighted all items, reset and increase the loop count
+                if (currentIndex >= listItems.length) {
+                    currentIndex = 0; // Reset to the first item
+                    loopCount++; // Increase the loop count
+                }
+        
+                // Stop the interval after 5 loops
+                if (loopCount >= maxLoops) {
+                    clearInterval(interval);
+                }
+            }, 1200); // Delay of 2 seconds (2000ms) between each highlight
+        });
+        
     </script>
 
 </body>
