@@ -1,6 +1,7 @@
 from django import forms
 from .models import UserInput
 from .models import Quote
+from .models import Plan, Branch
 
 class UserInputForm(forms.ModelForm):
     # Add custom labels for fields
@@ -83,11 +84,11 @@ class UserInputForm(forms.ModelForm):
     )
     
     daily_summary = forms.CharField(
-        max_length=1000,
+        max_length=10000,
         required=False,
         widget=forms.Textarea(attrs={
             'class': 'form-control',
-            'placeholder': 'Share something nice you did today...',
+            'placeholder': 'Share something about today...',
             'rows': 4,
             'style': 'resize: none;',
             'minlength': '10',  # Minimum length requirement
@@ -118,3 +119,13 @@ class QuoteForm(forms.ModelForm):
     class Meta:
         model = Quote
         fields = ['text']
+        
+class PlanForm(forms.ModelForm):
+    class Meta:
+        model = Plan
+        fields = ['title', 'description']
+
+class BranchForm(forms.ModelForm):
+    class Meta:
+        model = Branch
+        fields = ['plan', 'name', 'notes']

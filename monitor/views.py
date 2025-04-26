@@ -26,6 +26,9 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
 from datetime import datetime
 
+from .forms import PlanForm, BranchForm
+from .models import Plan, Branch
+
 # provides endpoings for GET, POST, PUT, DELETE
 class CalendarTaskViewSet(ModelViewSet):
     permission_classes = [AllowAny]
@@ -311,4 +314,43 @@ def export_to_excel_view(request):
     workbook.save(response)
     
     return response
+def plan_ideas(request):
+    plans = Plan.objects.all()
+    if request.method == "POST":
+        if 'add_plan' in request.POST:
+            form = PlanForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('plan_ideas')
+        
+        elif 'add_branch' in request.POST:
+            branch_name = request.POST.get('branch_name')
+            branch_notes = request.POST.get('branch_notes')
+            plan_id = request.POST.get('plan_id')
+            try:
+                plan = Plan.objects.get(id=plan_id)
+                Branch.objects.create(plan=plan, name=branch_name, notes=branch_notes)
+                return redirect('plan_ideas')
+            except Plan.DoesNotExist:
+                # Optional: You can handle plan not found error more gracefully
+                return redirect('plan_ideas')
 
+        elif 'delete_plan' in request.POST:
+            plan_id = request.POST.get('plan_id')
+            plan = Plan.objects.get(id=plan_id)
+            plan.delete()
+            return redirect('plan_ideas')
+        
+        elif 'delete_branch' in request.POST:
+            branch_id = request.POST.get('branch_id')
+            branch = Branch.objects.get(id=branch_id)
+            branch.delete()
+            return redirect('plan_ideas')
+
+    plan_form = PlanForm()
+    branch_form = BranchForm()
+    return render(request, 'monitor/plan_ideas.html', {
+        'plans': plans,
+        'plan_form': plan_form,
+        'branch_form': branch_form,
+    })

@@ -86,6 +86,21 @@
             transform: translateY(-2px);
         }
 
+        .button--plan {
+            background: linear-gradient(90deg, #7F7FD5, #86A8E7, #4FBDBA); /* replaced #91EAE4 with #4FBDBA */
+            color: white;
+            box-shadow: 0 4px 12px rgba(100, 180, 200, 0.4);
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
+            border: none;
+        }
+        
+        .button--plan:hover {
+            background: linear-gradient(90deg, #4FBDBA, #86A8E7, #7F7FD5);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(100, 180, 200, 0.6);
+        }
+        
+
         /* Quotes Section Styles */
         .quotes-grid {
             display: grid;
@@ -475,17 +490,19 @@
 <body>
     <div class="main-container">
         <h1>Welcome, {{ user.username }}</h1>
-
-        <button class="button button--primary" onclick="window.location.href='{% url 'input' %}'">Go to Input Page</button>
-        <button class="button button--secondary" onclick="window.location.href='{% url 'chart' %}'">Go to Chart Page</button>
-
-        <button class="button button--download" id="download-btn">Download Data</button>
-
-        <button class="button button--secondary" onclick="window.location.href='{% url 'calendar' %}'">Go to Calendar Page</button>
-
-        <br>
-        <button class="button button--logout" onclick="window.location.href='{% url 'logout' %}'">Logout</button>
-    </div>
+    
+        <div class="button-grid">
+            <button class="button button--primary" onclick="window.location.href='{% url 'input' %}'">Go to Input Page</button>
+            <button class="button button--secondary" onclick="window.location.href='{% url 'chart' %}'">Go to Chart Page</button>
+            <button class="button button--download" id="download-btn">Download Data</button>
+            <button class="button button--secondary" onclick="window.location.href='{% url 'calendar' %}'">Go to Calendar Page</button>
+            <button class="button button--plan" onclick="window.location.href='{% url 'plan_ideas' %}'">Go to Plan Ideas</button>
+        </div>
+    
+        <div class="logout-container">
+            <button class="button button--logout" onclick="window.location.href='{% url 'logout' %}'">Logout</button>
+        </div>
+    </div>    
 
     <!-- Modal Structure -->
     <div id="instructionModal" class="modal">

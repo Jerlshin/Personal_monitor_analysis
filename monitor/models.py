@@ -98,4 +98,19 @@ class TodoTask(models.Model):
         return self.task_name
 
 
+class Plan(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.title
+
+class Branch(models.Model):
+    plan = models.ForeignKey(Plan, related_name='branches', on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
