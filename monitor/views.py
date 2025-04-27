@@ -314,6 +314,8 @@ def export_to_excel_view(request):
     workbook.save(response)
     
     return response
+
+@login_required
 def plan_ideas(request):
     plans = Plan.objects.all()
     if request.method == "POST":
