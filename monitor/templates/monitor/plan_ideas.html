@@ -110,7 +110,7 @@
           body: JSON.stringify(data)
         });
     
-        console.log("Raw Response:", response); // Add this
+        // console.log("Raw Response:", response); // Add this
         if (!response.ok) {
           const errorText = await response.text();
           console.error("HTTP Error:", response.status, errorText);
@@ -141,6 +141,25 @@
     function toggleBranchForm(planId) {
       const form = document.getElementById(`add-branch-form-${planId}`);
       form.classList.toggle('hidden');
+
+      if (!form.classList.contains('hidden')) {
+        centerElementInViewport(form);
+      }
+    }
+    
+    function centerElementInViewport(element) {
+      const elementRect = element.getBoundingClientRect();
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+
+      // Calculate the vertical scroll needed to center the element
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+      const scrollToY = scrollTop + elementRect.top - (viewportHeight / 2) + (elementRect.height / 2);
+
+      // Smoothly scroll to the calculated position
+      window.scrollTo({
+        top: scrollToY,
+        behavior: 'smooth'
+      });
     }
 
     // Add new plan via AJAX
@@ -221,7 +240,7 @@
           tempDiv.innerHTML = newBranchHTML;
           const newBranchElement = tempDiv.firstElementChild; // Use firstElementChild
 
-          console.log("Corrected New Branch Element:", newBranchElement); // Verify it's the div
+          // console.log("Corrected New Branch Element:", newBranchElement); // Verify it's the div
 
           const addBranchContainer = branchPanel.querySelector('.add-branch-container');
           branchPanel.insertBefore(newBranchElement, addBranchContainer); // Use the DOM element
