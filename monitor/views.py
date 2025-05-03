@@ -12,6 +12,8 @@ from django.http import HttpResponse
 import openpyxl
 from openpyxl.utils import get_column_letter
 
+import json
+
 # provides basic CRUD functionality such as GET, POST, DELETE, PUT
 from rest_framework.viewsets import ModelViewSet
 
@@ -318,41 +320,92 @@ def export_to_excel_view(request):
 @login_required
 def plan_ideas(request):
     plans = Plan.objects.all()
-    if request.method == "POST":
-        if 'add_plan' in request.POST:
-            form = PlanForm(request.POST)
-            if form.is_valid():
-                form.save()
-                return redirect('plan_ideas')
-        
-        elif 'add_branch' in request.POST:
-            branch_name = request.POST.get('branch_name')
-            branch_notes = request.POST.get('branch_notes')
-            plan_id = request.POST.get('plan_id')
-            try:
-                plan = Plan.objects.get(id=plan_id)
-                Branch.objects.create(plan=plan, name=branch_name, notes=branch_notes)
-                return redirect('plan_ideas')
-            except Plan.DoesNotExist:
-                # Optional: You can handle plan not found error more gracefully
-                return redirect('plan_ideas')
-
-        elif 'delete_plan' in request.POST:
-            plan_id = request.POST.get('plan_id')
-            plan = Plan.objects.get(id=plan_id)
-            plan.delete()
-            return redirect('plan_ideas')
-        
-        elif 'delete_branch' in request.POST:
-            branch_id = request.POST.get('branch_id')
-            branch = Branch.objects.get(id=branch_id)
-            branch.delete()
-            return redirect('plan_ideas')
-
-    plan_form = PlanForm()
-    branch_form = BranchForm()
     return render(request, 'monitor/plan_ideas.html', {
         'plans': plans,
-        'plan_form': plan_form,
-        'branch_form': branch_form,
     })
+
+# API Views for AJAX calls
+@login_required
+def add_plan_api(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            form = PlanForm(data)
+            if form.is_valid():
+                plan = form.save()
+                return JsonResponse({
+                    'success': True,
+                    'plan': {
+                        'id': plan.id,
+                        'title': plan.title,
+                        'description': plan.description,
+                        'created_at': plan.created_at.strftime('%Y-%m-%d %H:%M')
+                    }
+                })
+            else:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Invalid form data',
+                    'errors': form.errors.as_json()
+                })
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+@login_required
+def add_branch_api(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            plan_id = data.get('plan_id')
+            try:
+                plan = Plan.objects.get(id=plan_id)
+                branch = Branch.objects.create(
+                    plan=plan,
+                    name=data.get('branch_name'),
+                    notes=data.get('branch_notes')
+                )
+                return JsonResponse({
+                    'success': True,
+                    'branch': {
+                        'id': branch.id,
+                        'name': branch.name,
+                        'notes': branch.notes,
+                        'created_at': branch.created_at.strftime('%Y-%m-%d %H:%M')
+                    }
+                })
+            except Plan.DoesNotExist:
+                return JsonResponse({'success': False, 'error': 'Plan not found'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+@login_required
+def delete_plan_api(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            plan_id = data.get('plan_id')
+            plan = Plan.objects.get(id=plan_id)
+            plan.delete()
+            return JsonResponse({'success': True})
+        except Plan.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Plan not found'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+@login_required
+def delete_branch_api(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            branch_id = data.get('branch_id')
+            branch = Branch.objects.get(id=branch_id)
+            branch.delete()
+            return JsonResponse({'success': True})
+        except Branch.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Branch not found'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})

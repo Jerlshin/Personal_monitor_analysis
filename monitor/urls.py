@@ -22,6 +22,10 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('api/load-tasks/', views.load_tasks, name='load-tasks'),
     path('plan-ideas/', views.plan_ideas, name='plan_ideas'),
+    path('api/add-plan/', views.add_plan_api, name='add_plan_api'),
+    path('api/add-branch/', views.add_branch_api, name='add_branch_api'),
+    path('api/delete-plan/', views.delete_plan_api, name='delete_plan_api'),
+    path('api/delete-branch/', views.delete_branch_api, name='delete_branch_api'),
 
 ]
 
