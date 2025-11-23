@@ -6,175 +6,156 @@
     <title>Daily Input - User Monitoring</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* Custom Styles for Habit Cards */
-        .habit-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .habit-card {
-            background: rgba(255, 255, 255, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            border-radius: 12px;
-            padding: 15px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-        }
-
-        .habit-card:hover {
-            transform: translateY(-2px);
-            background: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-
-        /* Visual state when checkbox is checked */
-        .habit-card.active {
-            background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
-            border-color: var(--success-color);
-            color: #155724;
-        }
-
-        /* Hide actual checkbox but keep it accessible */
-        .habit-checkbox {
-            position: absolute;
-            opacity: 0;
-            cursor: pointer;
-            height: 0;
-            width: 0;
-        }
-
-        .habit-icon {
-            font-size: 1.2rem;
-            color: var(--text-light);
-        }
-        
-        .habit-card.active .habit-icon {
-            color: #155724;
-        }
-
-        .date-badge {
-            background: var(--primary-color);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            display: inline-block;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
-        }
+        /* Additional Page Specifics */
+        body { background-color: #F5F5F7; }
+        .habit-checkbox { display: none; } /* Hide default checkboxes */
     </style>
 </head>
 <body>
 
-    <!-- Common Navbar -->
+    <!-- Navbar -->
     <nav class="navbar" id="mainNav">
         <div class="navbar-brand">LifeMonitor</div>
         <div class="nav-links">
             <a href="{% url 'home' %}" class="nav-item">Home</a>
+            <a href="{% url 'settings' %}" class="nav-item">Settings</a>
             <a href="{% url 'logout' %}" class="nav-item btn-logout">Logout</a>
         </div>
     </nav>
 
-    <div style="max-width: 800px; margin: 0 auto; padding: 20px;">
+    <div class="input-container">
         
-        <!-- Header Section -->
-        <div style="text-align: center;" class="animate-fade-up">
-            <h1 style="font-weight: 800; margin-bottom: 10px;">Daily Tracker</h1>
-            <div class="date-badge">📅 {{ current_date|date:"l, F jS, Y" }}</div>
+        <!-- Header -->
+        <div class="ritual-header animate-fade-up">
+            <div class="ritual-date">{{ current_date|date:"l, F jS" }}</div>
+            <h1 class="ritual-title">Daily Review</h1>
         </div>
 
-        <form method="post">
+        <form method="post" id="dailyForm">
             {% csrf_token %}
             
-            <!-- Habits Section -->
-            <div class="glass-container animate-fade-up delay-1" style="margin-bottom: 30px;">
-                <h3 style="margin-bottom: 20px; color: var(--primary-color);">Habits & Tasks</h3>
+            <div class="ritual-grid">
                 
-                <div class="habit-grid">
-                    {% for habit in habits %}
-                    <label class="habit-card" id="card_{{ habit.id }}">
-                        <div>
-                            <div style="font-weight: 700; font-size: 1.05rem;">{{ habit.name }}</div>
-                            {% if habit.description %}
-                            <div style="font-size: 0.85rem; opacity: 0.8;">{{ habit.description }}</div>
-                            {% endif %}
-                        </div>
-                        <input type="checkbox" 
-                               class="habit-checkbox" 
-                               name="habit_{{ habit.id }}" 
-                               id="habit_{{ habit.id }}" 
-                               onchange="toggleCard(this, 'card_{{ habit.id }}')">
-                        <div class="habit-icon">○</div>
-                    </label>
-                    {% empty %}
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 20px; color: var(--text-light);">
-                        <p>No habits found.</p>
-                        <a href="{% url 'habit_list' %}" class="btn btn-secondary btn-sm">Manage Habits</a>
+                <!-- LEFT PANE: Habits -->
+                <div class="habit-stack animate-fade-up delay-1">
+                    <div class="stack-title">
+                        <i class="fas fa-check-circle" style="color: var(--success-color);"></i> 
+                        Habit Stack
                     </div>
-                    {% endfor %}
+                    
+                    <div class="habit-list">
+                        {% for habit in habits %}
+                        <label class="habit-pill" id="pill_{{ habit.id }}">
+                            <div class="habit-info">
+                                <div class="habit-name">{{ habit.name }}</div>
+                                {% if habit.description %}
+                                <div class="habit-sub">{{ habit.description }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <input type="checkbox" 
+                                   class="habit-checkbox" 
+                                   name="habit_{{ habit.id }}" 
+                                   id="check_{{ habit.id }}" 
+                                   onchange="togglePill('{{ habit.id }}')">
+                            
+                            <div class="check-circle">
+                                <i class="fas fa-check check-icon"></i>
+                            </div>
+                        </label>
+                        {% empty %}
+                        <div style="text-align: center; padding: 30px; color: #aaa; border: 2px dashed #eee; border-radius: 16px;">
+                            <p style="margin-bottom: 10px;">No habits defined.</p>
+                            <a href="{% url 'habit_list' %}" style="color: var(--primary-color); font-weight: 600; font-size: 14px;">+ Add Habits</a>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
+
+                <!-- RIGHT PANE: Journal -->
+                <div class="journal-pane animate-fade-up delay-2">
+                    <div class="journal-header">
+                        <h2 style="font-size: 22px; font-weight: 700; margin: 0;">Reflection</h2>
+                        <p style="color: #8E8E93; margin-top: 5px;">Capture the essence of your day.</p>
+                    </div>
+
+                    <div class="input-group-clean">
+                        <label class="label-clean">
+                            <i class="fas fa-heart" style="color: #FF2D55; margin-right: 6px;"></i> Connection
+                        </label>
+                        <!-- Custom styling for the django form field -->
+                        <input type="text" name="loved_someone" class="input-clean" placeholder="Who did you connect with or appreciate today?">
+                    </div>
+
+                    <div class="input-group-clean">
+                        <label class="label-clean">
+                            <i class="fas fa-book" style="color: #007AFF; margin-right: 6px;"></i> Journal
+                        </label>
+                        <textarea name="daily_summary" class="input-clean textarea-clean" placeholder="Write a brief summary, lessons learned, or memorable moments..."></textarea>
+                    </div>
+
+                    <div class="submit-bar">
+                        <span class="save-status" id="saveStatus">Unsaved Changes</span>
+                        <button type="submit" class="btn-ritual-save">
+                            Complete Day <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
             </div>
-
-            <!-- Reflection Section -->
-            <div class="glass-container animate-fade-up delay-2">
-                <h3 style="margin-bottom: 20px; color: var(--primary-color);">Daily Reflection</h3>
-                
-                <div class="form-group">
-                    <label class="form-label">Who did you connect with or love today?</label>
-                    {{ form.loved_someone }}
-                    <!-- Ensure your form widget in forms.py has class 'form-control' or add styling via JS/CSS if needed. 
-                         The common CSS targets .form-control class -->
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Daily Summary</label>
-                    {{ form.daily_summary }}
-                </div>
-
-                <button type="submit" class="btn btn-primary btn-block" style="margin-top: 30px; padding: 15px; font-size: 1.1rem;">
-                    Submit Entry
-                </button>
-            </div>
-
         </form>
     </div>
 
     <script>
-        // Toggle visual state of habit cards
-        function toggleCard(checkbox, cardId) {
-            const card = document.getElementById(cardId);
-            const icon = card.querySelector('.habit-icon');
+        // Toggle visual state of habit pills
+        function togglePill(id) {
+            const pill = document.getElementById('pill_' + id);
+            const checkbox = document.getElementById('check_' + id);
             
             if (checkbox.checked) {
-                card.classList.add('active');
-                icon.innerHTML = '✔';
+                pill.classList.add('completed');
+                triggerConfetti(pill); // Optional: Visual reward
             } else {
-                card.classList.remove('active');
-                icon.innerHTML = '○';
+                pill.classList.remove('completed');
             }
+            updateStatus();
         }
 
-        // Smart Navbar Scroll Logic
+        // Simple save status indicator logic
+        const formInputs = document.querySelectorAll('input, textarea');
+        const statusEl = document.getElementById('saveStatus');
+
+        formInputs.forEach(input => {
+            input.addEventListener('input', updateStatus);
+        });
+
+        function updateStatus() {
+            statusEl.style.opacity = '1';
+            statusEl.innerText = 'Ready to submit...';
+        }
+
+        // Navbar Scroll
         let lastScroll = 0;
         const navbar = document.getElementById('mainNav');
-
         window.addEventListener('scroll', () => {
             const currentScroll = window.pageYOffset;
-            if (currentScroll > lastScroll && currentScroll > 100) {
+            if (currentScroll > lastScroll && currentScroll > 50) {
                 navbar.classList.add('nav-hidden');
             } else {
                 navbar.classList.remove('nav-hidden');
             }
             lastScroll = currentScroll;
         });
+
+        // Optional: Tiny confetti burst on click (Pure CSS/JS logic would go here for flair)
+        function triggerConfetti(element) {
+            // Placeholder for a micro-interaction
+            element.style.transform = 'scale(0.98)';
+            setTimeout(() => element.style.transform = '', 100);
+        }
     </script>
 </body>
 </html>

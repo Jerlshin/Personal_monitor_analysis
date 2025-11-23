@@ -1987,3 +1987,536 @@ input:checked + .slider:before {
         padding-bottom: 80px; /* Space for bottom scroll */
     }
 }
+
+
+/* ==========================================================================
+   17. UNIFIED HOME DASHBOARD (Life OS Theme)
+   ========================================================================== */
+
+   .home-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* --- 1. Glass Hero Card --- */
+.hero-card {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: saturate(180%) blur(40px);
+    -webkit-backdrop-filter: saturate(180%) blur(40px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 28px;
+    padding: 32px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
+}
+
+.hero-blur {
+    position: absolute;
+    top: -50%; right: -20%;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(0, 122, 255, 0.15) 0%, transparent 70%);
+    filter: blur(50px);
+    z-index: 0;
+}
+
+.hero-content { position: relative; z-index: 2; }
+
+.hero-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.hero-date {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-light);
+}
+
+.btn-manifesto {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.6);
+    border: 1px solid rgba(255,255,255,0.5);
+    color: var(--primary-color);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-manifesto:hover { transform: scale(1.1); background: white; }
+
+.hero-greeting {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--text-dark);
+    letter-spacing: -0.02em;
+}
+
+.hero-username {
+    background: linear-gradient(135deg, #007AFF, #5856D6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* --- 2. Smart Bento Grid --- */
+.bento-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 170px; /* Fixed Base Height */
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.bento-item {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: saturate(180%) blur(25px);
+    -webkit-backdrop-filter: saturate(180%) blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 24px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-decoration: none;
+    color: var(--text-dark);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+
+.bento-item:hover {
+    transform: translateY(-4px) scale(1.01);
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+    z-index: 10;
+}
+
+.span-2 { grid-column: span 2; }
+.span-row-2 { grid-row: span 2; }
+
+/* Bento Content */
+.bento-icon-box {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; color: white;
+    margin-bottom: 12px;
+}
+
+.bg-blue { background: linear-gradient(135deg, #007AFF, #0055ff); }
+.bg-green { background: linear-gradient(135deg, #34C759, #2db14e); }
+.bg-orange { background: linear-gradient(135deg, #FF9500, #ff7b00); }
+.bg-red { background: linear-gradient(135deg, #FF3B30, #d63229); }
+.bg-purple { background: linear-gradient(135deg, #AF52DE, #8e44b3); }
+.bg-dark { background: linear-gradient(135deg, #3A3A3C, #1C1C1E); }
+
+.bento-title {
+    font-size: 17px; font-weight: 700; margin-bottom: 2px;
+}
+.bento-desc {
+    font-size: 13px; color: var(--text-light); font-weight: 500;
+}
+
+/* Specific Widget Overrides */
+.daily-widget {
+    background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(240,248,255,0.8));
+    border: 1px solid rgba(0, 122, 255, 0.2);
+}
+.daily-widget .bento-icon-box {
+    width: 56px; height: 56px; font-size: 26px; border-radius: 16px;
+}
+.daily-widget .bento-title { font-size: 24px; }
+.daily-widget .bento-desc { font-size: 15px; margin-bottom: auto; }
+
+.bento-action {
+    background: #007AFF;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 20px;
+    font-size: 14px; font-weight: 600;
+    align-self: flex-start;
+    margin-top: 10px;
+    display: inline-flex; align-items: center; gap: 8px;
+}
+
+.bento-bg-icon {
+    position: absolute;
+    right: -10px; bottom: -20px;
+    font-size: 120px;
+    opacity: 0.04;
+    transform: rotate(-10deg);
+    pointer-events: none;
+}
+
+/* --- 3. iOS Input Bar --- */
+.ios-input-bar {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: saturate(180%) blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 22px;
+    padding: 8px;
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+}
+
+.text-field-container {
+    flex: 1;
+    background: rgba(118, 118, 128, 0.12);
+    border-radius: 18px;
+    padding: 6px 14px;
+    transition: background 0.2s;
+}
+.text-field-container:focus-within {
+    background: white;
+    box-shadow: 0 0 0 2px var(--primary-color);
+}
+
+.seamless-textarea {
+    width: 100%; border: none; background: transparent;
+    padding: 8px 0; font-size: 16px; color: var(--text-dark);
+    outline: none; resize: none; max-height: 100px;
+    font-family: var(--font-family-system);
+}
+
+.btn-ios-send {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: var(--primary-color); color: white;
+    border: none; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: transform 0.2s;
+    margin-bottom: 2px;
+}
+.btn-ios-send:hover { transform: scale(1.05); }
+
+.sense-toggle-btn {
+    cursor: pointer; padding: 0 4px; margin-bottom: 3px;
+}
+.sense-toggle-btn input { display: none; }
+.leaf-icon-wrapper {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #C7C7CC; font-size: 18px; transition: 0.2s;
+}
+.sense-toggle-btn:hover .leaf-icon-wrapper { background: rgba(0,0,0,0.05); }
+.sense-toggle-btn input:checked + .leaf-icon-wrapper {
+    color: var(--success-color); transform: scale(1.1);
+}
+
+/* --- 4. Masonry Quote Cards --- */
+.quote-card {
+    background: white;
+    border-radius: 20px;
+    padding: 24px;
+    font-family: 'New York', 'Georgia', serif;
+    font-size: 17px; line-height: 1.5;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+    border-left: 4px solid var(--primary-color);
+    transition: transform 0.2s;
+}
+.quote-card:hover { transform: translateY(-3px); }
+.quote-card.sensed { background: #F2FCF5; border-left-color: var(--success-color); }
+
+/* --- 5. iOS Bottom Sheet Modal --- */
+.ios-sheet-modal {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.4); z-index: 3000;
+    backdrop-filter: blur(4px);
+    align-items: flex-end; justify-content: center;
+    opacity: 0; transition: opacity 0.3s;
+}
+.ios-sheet-modal.show { display: flex; opacity: 1; }
+
+.sheet-content {
+    width: 100%; max-width: 600px;
+    background: #F2F2F7;
+    border-radius: 24px 24px 0 0;
+    padding: 30px;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+}
+.ios-sheet-modal.show .sheet-content { transform: translateY(0); }
+
+.sheet-handle {
+    width: 40px; height: 5px; background: #C7C7CC;
+    border-radius: 10px; margin: 0 auto 20px auto;
+}
+
+.manifesto-list { list-style: none; }
+.manifesto-list li {
+    padding: 14px 18px; background: white;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    font-size: 16px; display: flex; align-items: center; gap: 12px;
+}
+.manifesto-list li:first-child { border-top-left-radius: 14px; border-top-right-radius: 14px; }
+.manifesto-list li:last-child { border-bottom-left-radius: 14px; border-bottom-right-radius: 14px; border-bottom: none; }
+
+/* Responsive */
+@media (max-width: 900px) {
+    .bento-grid { grid-template-columns: repeat(2, 1fr); }
+    .span-2 { grid-column: span 2; }
+}
+@media (max-width: 600px) {
+    .hero-title { font-size: 32px; }
+    .bento-grid { gap: 15px; grid-auto-rows: 150px; }
+    .bento-item { padding: 20px; }
+    .daily-widget .bento-title { font-size: 20px; }
+    .hero-card { padding: 24px; }
+}
+
+/* ... [Keep existing styles] ... */
+
+/* ==========================================================================
+   19. Daily Input Redesign ("The Ritual")
+   ========================================================================== */
+
+   .input-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    padding-bottom: 120px;
+}
+
+.ritual-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.ritual-date {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-light);
+    margin-bottom: 8px;
+}
+
+.ritual-title {
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--text-dark);
+    letter-spacing: -1px;
+}
+
+/* --- Split Layout --- */
+.ritual-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1.8fr; /* Narrower habits, wider journal */
+    gap: 40px;
+    align-items: start;
+}
+
+/* --- Left Pane: Habit Stack --- */
+.habit-stack {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.stack-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.habit-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* New Habit Item Design */
+.habit-pill {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    padding: 16px 20px;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border: 1px solid rgba(0,0,0,0.04);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    user-select: none;
+}
+
+.habit-pill:hover {
+    transform: translateX(5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.habit-pill.completed {
+    background: #34C759; /* iOS Green */
+    border-color: #34C759;
+    color: white;
+    box-shadow: 0 5px 15px rgba(52, 199, 89, 0.3);
+}
+
+.habit-info { flex: 1; }
+
+.habit-name {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1.2;
+}
+
+.habit-sub {
+    font-size: 12px;
+    opacity: 0.6;
+    margin-top: 3px;
+    font-weight: 500;
+}
+
+.check-circle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid #E5E5EA;
+    margin-left: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    background: transparent;
+}
+
+.habit-pill:hover .check-circle { border-color: #C7C7CC; }
+
+.habit-pill.completed .check-circle {
+    border-color: white;
+    background: white;
+    color: #34C759;
+}
+
+.check-icon {
+    font-size: 14px;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.2s;
+}
+
+.habit-pill.completed .check-icon {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* --- Right Pane: Journal Notebook --- */
+.journal-pane {
+    background: white;
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+    position: relative;
+    border: 1px solid rgba(0,0,0,0.03);
+}
+
+.journal-header {
+    margin-bottom: 30px;
+    border-bottom: 2px dashed #E5E5EA;
+    padding-bottom: 20px;
+}
+
+.input-group-clean { margin-bottom: 30px; }
+
+.label-clean {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #8E8E93;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+}
+
+.input-clean {
+    width: 100%;
+    border: none;
+    background: #F2F2F7;
+    padding: 18px;
+    border-radius: 14px;
+    font-size: 16px;
+    color: #1C1C1E;
+    font-family: var(--font-family-system);
+    transition: all 0.2s;
+}
+
+.input-clean:focus {
+    background: #E5E5EA;
+    outline: none;
+    box-shadow: 0 0 0 2px var(--primary-color);
+}
+
+.textarea-clean {
+    min-height: 150px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+.submit-bar {
+    margin-top: 40px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+}
+
+.save-status {
+    font-size: 13px;
+    color: var(--text-light);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.btn-ritual-save {
+    background: #000;
+    color: white;
+    padding: 16px 32px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-ritual-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+    .ritual-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .habit-stack {
+        padding: 20px;
+    }
+    
+    .journal-pane {
+        padding: 25px;
+    }
+    
+    .ritual-title { font-size: 28px; }
+}
