@@ -3,173 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Login - User Monitoring</title>
     {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-image: url('{% static "images/login_page_bg.jpg" %}');
-            background-size: cover;
-            background-position: center;
-            background: linear-gradient(to right, #eef2f3, #8e9eab); /* Subtle gradient */
-            margin: 0;
-            padding: 0;
+        /* Page specific override for centering */
+        body.login-page {
             display: flex;
+            align-items: center;
             justify-content: center;
-            align-items: center;
+            padding-top: 0; /* Reset padding for centering */
             height: 100vh;
-            color: #333;
-            overflow: hidden;
         }
-
-        .login-container {
-            width: 600px; /* Increased width */
-            padding: 50px; /* Increased padding */
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(230, 247, 255, 0.9)); /* Slightly lighter gradient */
-            border-radius: 15px; /* Rounded corners */
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3); /* Deeper shadow for a floating effect */
-            transition: transform 0.3s ease; /* Smooth scaling effect */
-        }
-
-        .login-container:hover {
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-            transform: translateY(-2px);
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #333;
-            font-size: 1.8rem;
-            letter-spacing: 1px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 8px;
-            color: #555;
-        }
-
-        .form-group input {
+        .login-wrapper {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            color: #333;
-            transition: border 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .form-group input:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 8px rgba(0, 123, 255, 0.4);
-            outline: none;
-        }
-
-        .password-wrapper {
-            display: flex;
-            align-items: center;
-        }
-
-        .password-wrapper input {
-            flex-grow: 1;
-        }
-
-        .toggle-password {
-            margin-left: 10px;
-        }
-
-        .toggle-password input {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-        }
-
-        .toggle-label {
-            font-size: 0.9rem;
-            color: #007bff;
-            cursor: pointer;
-            margin-left: 5px;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 12px;
-            background: #007bff;
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s ease, transform 0.2s ease;
-            margin-top: 20px;
-        }
-
-        .btn:hover {
-            background: #0056b3;
-            transform: translateY(-2px);
-        }
-
-        .btn:active {
-            transform: translateY(1px);
-        }
-
-        .error {
-            color: red;
-            text-align: center;
-            margin-bottom: 15px;
-        }
-
-        @media (max-width: 480px) {
-            .login-container {
-                width: 90%;
-                padding: 20px;
-            }
+            max-width: 450px;
+            padding: 20px;
         }
     </style>
 </head>
-<body>
-    <div class="login-container">
-        <h2>Login</h2>
-        {% if messages %}
-            <div class="error">
-                {% for message in messages %}
-                    <p>{{ message }}</p>
-                {% endfor %}
-            </div>
-        {% endif %}
-        <form method="POST" action="">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <div class="password-wrapper">
-                    <input type="password" id="password" name="password" required>
-                    <div class="toggle-password">
-                        <input type="checkbox" id="togglePassword" onclick="togglePasswordVisibility()" class="toggle-input">
-                        <label for="togglePassword" class="toggle-label">Show</label>
+<body class="login-page">
+
+    <!-- Common Navbar -->
+    <nav class="navbar" id="mainNav">
+        <div class="navbar-brand">LifeMonitor</div>
+        <div class="nav-links">
+            <a href="{% url 'home' %}" class="nav-item">Home</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}" class="nav-item btn-logout">Logout</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="login-wrapper">
+        <div class="glass-container animate-fade-up">
+            <h2 style="text-align: center; margin-bottom: 30px; color: var(--primary-color);">Welcome Back</h2>
+            
+            {% if messages %}
+                <div class="form-group">
+                    {% for message in messages %}
+                        <div style="color: var(--danger-color); text-align: center; background: rgba(220,53,69,0.1); padding: 10px; border-radius: 8px;">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form method="POST" action="">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label" for="username">Username</label>
+                    <input class="form-control" type="text" id="username" name="username" placeholder="Enter your username" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <div style="position: relative;">
+                        <input class="form-control" type="password" id="password" name="password" placeholder="Enter your password" required>
+                        <span onclick="togglePassword()" style="position: absolute; right: 15px; top: 12px; cursor: pointer; color: var(--text-light); font-size: 0.8rem; font-weight: 600;">Show</span>
                     </div>
                 </div>
-            </div>
-            <button type="submit" class="btn">Login</button>
-        </form>
+                <button type="submit" class="btn btn-primary btn-block" style="margin-top: 20px;">Sign In</button>
+            </form>
+        </div>
     </div>
 
     <script>
-        function togglePasswordVisibility() {
-            const passwordInput = document.getElementById('password');
-            const toggleCheckbox = document.getElementById('togglePassword');
-            passwordInput.type = toggleCheckbox.checked ? 'text' : 'password';
+        // Password Toggle Logic
+        function togglePassword() {
+            const input = document.getElementById('password');
+            const btn = event.target;
+            if (input.type === "password") {
+                input.type = "text";
+                btn.innerText = "Hide";
+            } else {
+                input.type = "password";
+                btn.innerText = "Show";
+            }
         }
+
+        // Smart Navbar Scroll Logic
+        let lastScroll = 0;
+        const navbar = document.getElementById('mainNav');
+
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            if (currentScroll > lastScroll && currentScroll > 100) {
+                navbar.classList.add('nav-hidden');
+            } else {
+                navbar.classList.remove('nav-hidden');
+            }
+            lastScroll = currentScroll;
+        });
     </script>
 </body>
 </html>

@@ -546,7 +546,7 @@ COPY public.auth_permission (id, name, content_type_id, codename) FROM stdin;
 --
 
 COPY public.auth_user (id, password, last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined) FROM stdin;
-1	pbkdf2_sha256$870000$Eq65xK135TLRXfmJCAOscj$iV8M7hcgcFDe6uW3J42DWkHbVaSOlLlZerYM7R6UR9A=	2025-08-06 10:09:09.181251+00	f	jerlshin				f	t	2025-04-25 18:22:37.975701+00
+1	pbkdf2_sha256$870000$Eq65xK135TLRXfmJCAOscj$iV8M7hcgcFDe6uW3J42DWkHbVaSOlLlZerYM7R6UR9A=	2025-08-13 05:14:44.447095+00	f	jerlshin				f	t	2025-04-25 18:22:37.975701+00
 \.
 
 
@@ -636,7 +636,7 @@ COPY public.django_migrations (id, app, name, applied) FROM stdin;
 COPY public.django_session (session_key, session_data, expire_date) FROM stdin;
 zblg6gg14zsv94lrpr07m6xbkaoepgyk	.eJxVjEsOwiAUAO_C2hD-8Fy67xkIlPekamhS2pXx7oakC93OTObNYjr2Go-OW1wKuzLJLr8sp_mJbYjySO2-8nlt-7ZkPhJ-2s6nteDrdrZ_g5p6HduCVgRFpIU02ocknNOWlPCgjbNWeYMkgACUI2UQlUheUqYAJmcP7PMFraM2yQ:1uJXIR:EQxNhjMazpbZHidlre2WnSXlO-pqL0m8DLFBWmutr8w	2025-06-09 12:51:15.717979+00
 yl1s28p8im6bxngv3x5syqwm8hij8oyn	.eJxVjEsOwiAUAO_C2hD-8Fy67xkIlPekamhS2pXx7oakC93OTObNYjr2Go-OW1wKuzLJLr8sp_mJbYjySO2-8nlt-7ZkPhJ-2s6nteDrdrZ_g5p6HduCVgRFpIU02ocknNOWlPCgjbNWeYMkgACUI2UQlUheUqYAJmcP7PMFraM2yQ:1uRYoB:HIpETH4fZycJDSk8m3dUOJRfK6HUoxyjowUQPOuR04s	2025-07-01 16:05:11.00458+00
-xjragwn5kctmoid6xzca1bm0ndl6yq1t	.eJxVjEsOwiAUAO_C2hD-8Fy67xkIlPekamhS2pXx7oakC93OTObNYjr2Go-OW1wKuzLJLr8sp_mJbYjySO2-8nlt-7ZkPhJ-2s6nteDrdrZ_g5p6HduCVgRFpIU02ocknNOWlPCgjbNWeYMkgACUI2UQlUheUqYAJmcP7PMFraM2yQ:1ujb53:Z7nhJ3Z9iNbKV48MR510V9SL9qNt_VEO7eT_2hZEyn0	2025-08-20 10:09:09.188044+00
+xjragwn5kctmoid6xzca1bm0ndl6yq1t	.eJxVjEsOwiAUAO_C2hD-8Fy67xkIlPekamhS2pXx7oakC93OTObNYjr2Go-OW1wKuzLJLr8sp_mJbYjySO2-8nlt-7ZkPhJ-2s6nteDrdrZ_g5p6HduCVgRFpIU02ocknNOWlPCgjbNWeYMkgACUI2UQlUheUqYAJmcP7PMFraM2yQ:1um3oy:r3s0DXGzmKW6rjH2JaDiiEW0fNs2BGTTrTPS0uLccoQ	2025-08-27 05:14:44.453345+00
 \.
 
 
@@ -734,6 +734,7 @@ COPY public.monitor_userinput (id, date, read_bible, cultivated_relationships, b
 3	2025-05-28	f	t	f	t	f	Afnan	Today, I felt depressed and spoke to Sailesh and agreed to meet in the evening. And my brother attended VIT counselling and chose Mechanical courses from Vellore and Chennai campuses. I will fully study and work today without wasting any of the good time I am blessed with.	f	f	f	f	t	f
 4	2025-06-18	f	t	f	t	f	Mom and Dad		t	f	f	t	f	f
 5	2025-06-18	t	t	t	t	f	Jesus and parents		t	f	t	t	f	f
+6	2025-08-13	t	f	f	f	t	Daddy	I fought with afnan. I loved her so much, but she didn't reciprocate. She didn't talk to me for days and then, I myself approached her and texted a lot. I had asked a lot of important questions, such as when can we meet again personally and if she can send some pics of her because it's been so much time I have seen her face to face. I had also asked for video call, she denied. \r\n\r\nI had sent her gifts which included personally written letter which took me hours to complete, and a bouquet. I did all these earlier. I went out the way, I went out of the norm to do all these to her just because I loved her. I thought she enjoyed it. She said nobody has ever done this to her. I loved it. \r\n\r\nBut, today she said, "I don't know why you would do all these crazy stuff, like buying all these". She called be "extra super super dumb idiot person" just because I loved her. All I did was to love her, and all I got was this. There was no need for me to doo all these, yet I did. I loved her way out of the way. I confessed how I feel, like a true friend and morelike a sister. I wished her the very bests. Yet, I got this in return. It did really hurt me. \r\n\r\nI have been asked her if I can come and meet her around this month. She just kept ignoring this specific message for too long. So, I decided to take IELTS exam in Bangalore because she resides there. And I wanted to meet her after my exam. I went out all the way to ask dad not to come because I want to have some time with afnan. But, she didn't even respect me the slightest. \r\n\r\nShe didn't reply to texts, so, I confronted her. All she said was, "Is my job to answer all your texts?" This hurt me like anything. And, later I stopped arguing. There's no point in continuing this relationship. All I got was disappointments. \r\n\r\nFor a successful relationship, both should put effort. Love is not the emotion, rather it is emotion with action. Why had I been in this? She was with me because we were compelled to be together incollege. That's it. Nothing else. She was with me because she didn't have anyone at that moment. That's it. She loved me because she didn't have anyone else to love. However, in my case, I had everyone to love, yet I loved her the most. I had many people to whom I can give, yet, I gave her the most. Well, at least I learnt some lessons. Not to expect anything in return. \r\n\r\nWell, anyway, god said, \r\n\r\n"If you can love only the people who loves you, that's not love". \r\n\r\nTrue love is unconditional. Well, I'm a human. From now on, in any relationship, I won't put that person at the center of that relationship. Rather, god, Jesus will be the center of any relationship. God bless me. I want you. \r\n\r\nSo, yea. I don't see any future with her any longer. In all the dreams I dreamt, she was part of it. Now, I don't see worthy enough to be in my dreams. I don't hate her. But, I part away. I had put enough effort into this relationship. If she is not willing to invest time, that's her loss. I keep moving, with or without her. We don't find relationship, we make relationship. I'm pretty sure she finds me useless or burden because I keep reached her out. \r\n\r\nI have to chase love of Jesus rather than chasing love and validation from people. She is clearly not willing to spend time with me, she might have some other people in her life whom she finds more worthy to spend time. \r\n\r\nNot just her. Whoever it is. If they are not reciprocating enough, leave them. But love them. But, you don't have to invest your quality time in the wrong person. It's fine if you have loved her that much. It might hurt you. But, it's fine. You have rest of your life to find some other person who carries the torch of jesus. She who brings peace and blessings are is worthy. \r\n\r\nDoesn't matter if that's male or female, he/she who brings peace is worthy.	f	t	f	f	t	f
 \.
 
 
@@ -839,7 +840,7 @@ SELECT pg_catalog.setval('public.monitor_todotask_id_seq', 8, true);
 -- Name: monitor_userinput_id_seq; Type: SEQUENCE SET; Schema: public; Owner: master
 --
 
-SELECT pg_catalog.setval('public.monitor_userinput_id_seq', 5, true);
+SELECT pg_catalog.setval('public.monitor_userinput_id_seq', 6, true);
 
 
 --

@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - {{ month_name }} {{ selected_year }}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --primary-grad: linear-gradient(135deg, #007bff, #0056b3);
+            --success-grad: linear-gradient(135deg, #28a745, #218838);
+            --bg-grad: linear-gradient(to right, #eef2f3, #8e9eab);
+            --glass-bg: rgba(255, 255, 255, 0.92);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.5);
+            --shadow-sm: 0 4px 6px rgba(0,0,0,0.05);
+            --shadow-md: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        body {
+            background: var(--bg-grad);
+            font-family: 'Inter', sans-serif;
+            color: #2d3748;
+            padding-bottom: 60px;
+        }
+
+        /* --- Cards & Layout --- */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: var(--glass-border);
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 25px;
+            transition: transform 0.3s ease;
+            overflow: hidden;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .card-header-custom {
+            padding: 20px 25px;
+            background: rgba(255,255,255,0.6);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-title-text {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #1a202c;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* --- Stat Cards --- */
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+            height: 100%;
+            border-left: 5px solid transparent;
+        }
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 15px;
+            background: #f7fafc;
+        }
+        .stat-value { font-size: 1.5rem; font-weight: 800; line-height: 1.2; }
+        .stat-label { font-size: 0.85rem; color: #718096; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* --- Filter Section --- */
+        .filter-bar {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 30px;
+        }
+        
+        .habit-toggle-label {
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 50px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            user-select: none;
+            display: inline-block;
+            margin: 3px;
+        }
+        .habit-toggle-input:checked + .habit-toggle-label {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+        }
+        .habit-toggle-input { display: none; }
+
+        /* --- Timeline for Journals --- */
+        .timeline-container {
+            position: relative;
+            padding-left: 20px;
+        }
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 10px;
+            bottom: 0;
+            width: 3px;
+            background: #e2e8f0;
+            border-radius: 2px;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 25px;
+            padding-left: 25px;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: -9px;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            border: 4px solid #007bff;
+            z-index: 2;
+        }
+        .timeline-content {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+        }
+        .timeline-content::after {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 6px;
+            width: 0; 
+            height: 0; 
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent; 
+            border-right: 8px solid white; 
+        }
+        .timeline-date {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #007bff;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .summary-text { color: #4a5568; font-size: 0.95rem; line-height: 1.5; }
+        
+        /* Loved Badge */
+        .loved-badge {
+            background: #fff5f5;
+            color: #c53030;
+            border: 1px solid #feb2b2;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* --- Buttons --- */
+        .btn-action {
+            background: var(--primary-grad);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+            transition: transform 0.2s;
+        }
+        .btn-action:hover { transform: translateY(-2px); color: white; }
+
+        /* Scrollbar */
+        .journal-scroll {
+            max-height: 700px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        .journal-scroll::-webkit-scrollbar { width: 6px; }
+        .journal-scroll::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 3px;}
+        .journal-scroll::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 3px;}
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="font-weight-bold text-dark mb-0">Analytics Dashboard</h2>
+            <p class="text-muted mb-0">Insights for {{ month_name }} {{ selected_year }}</p>
+        </div>
+        <a href="{% url 'home' %}" class="btn btn-light shadow-sm font-weight-bold"><i class="fas fa-arrow-left mr-2"></i> Back to Home</a>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="filter-bar">
+        <form method="get" action="">
+            <div class="row align-items-end">
+                <div class="col-md-2">
+                    <label class="small font-weight-bold text-muted">MONTH</label>
+                    <select name="month" class="form-control custom-select shadow-none border-0 bg-light font-weight-bold">
+                        {% for m in months %}
+                        <option value="{{ m }}" {% if m == selected_month %}selected{% endif %}>{{ m }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="small font-weight-bold text-muted">YEAR</label>
+                    <select name="year" class="form-control custom-select shadow-none border-0 bg-light font-weight-bold">
+                        {% for y in years %}
+                        <option value="{{ y }}" {% if y == selected_year %}selected{% endif %}>{{ y }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="small font-weight-bold text-muted">VISIBLE HABITS</label>
+                    <div class="d-flex flex-wrap">
+                        {% for habit in all_habits %}
+                        <div class="habit-item">
+                            <input class="habit-toggle-input" type="checkbox" name="habits" value="{{ habit.id }}" id="h{{ habit.id }}" 
+                                {% if habit.id in selected_habit_ids %}checked{% endif %}>
+                            <label class="habit-toggle-label" for="h{{ habit.id }}">
+                                {{ habit.name }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-md-2 text-right">
+                    <button type="submit" class="btn btn-action w-100">Apply Filters</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Summary Stats Row (Populated via JS based on data context) -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="stat-card" style="border-left-color: #007bff;">
+                <div class="stat-icon" style="color: #007bff;"><i class="fas fa-calendar-check"></i></div>
+                <div>
+                    <div class="stat-value" id="totalDaysLogged">0</div>
+                    <div class="stat-label">Days Logged</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card" style="border-left-color: #28a745;">
+                <div class="stat-icon" style="color: #28a745;"><i class="fas fa-chart-line"></i></div>
+                <div>
+                    <div class="stat-value" id="habitCompletionRate">0%</div>
+                    <div class="stat-label">Avg. Completion</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card" style="border-left-color: #e53e3e;">
+                <div class="stat-icon" style="color: #e53e3e;"><i class="fas fa-heart"></i></div>
+                <div>
+                    <div class="stat-value" id="topConnection" style="font-size: 1.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;">-</div>
+                    <div class="stat-label">Top Connection</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row">
+        <!-- Left Column: Visualizations -->
+        <div class="col-lg-8">
+            <!-- Habit Chart -->
+            <div class="glass-card">
+                <div class="card-header-custom">
+                    <h5 class="card-title-text"><i class="fas fa-tasks text-primary"></i> Habit Consistency</h5>
+                    <span class="badge badge-pill badge-light text-muted">Daily Tracking</span>
+                </div>
+                <div class="card-body">
+                    <div style="height: 350px;">
+                        <canvas id="habitChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social/Loved Chart -->
+            <div class="glass-card">
+                <div class="card-header-custom">
+                    <h5 class="card-title-text"><i class="fas fa-user-friends text-danger"></i> Social Connections</h5>
+                    <span class="badge badge-pill badge-light text-muted">Impact Analysis</span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div style="height: 250px;">
+                                <canvas id="lovedChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-md-4 border-left">
+                            <h6 class="text-muted font-weight-bold mb-3 text-center">Top Interactions</h6>
+                            <div id="topLovedList" class="list-group list-group-flush">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Journal Timeline -->
+        <div class="col-lg-4">
+            <div class="glass-card h-100">
+                <div class="card-header-custom bg-white sticky-top">
+                    <h5 class="card-title-text"><i class="fas fa-book-open text-info"></i> Journal Timeline</h5>
+                </div>
+                <div class="card-body bg-light">
+                    <div class="journal-scroll">
+                        <div class="timeline-container">
+                            {% for entry in entries %}
+                                {% if entry.daily_summary or entry.loved_someone %}
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-date">{{ entry.date|date:"l, d M Y" }}</div>
+                                        
+                                        {% if entry.loved_someone %}
+                                        <div class="mb-2">
+                                            <span class="loved-badge">
+                                                <i class="fas fa-heart"></i> {{ entry.loved_someone }}
+                                            </span>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        {% if entry.daily_summary %}
+                                            <p class="summary-text mb-0">{{ entry.daily_summary }}</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% empty %}
+                                <div class="text-center p-5 text-muted">
+                                    <i class="fas fa-pen-nib fa-3x mb-3 opacity-50"></i>
+                                    <p>No journal entries for this period.</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- Data Parsing ---
+    const habitData = JSON.parse('{{ habit_data_json|safe }}');
+    const lovedLabels = JSON.parse('{{ loved_labels|safe }}');
+    const lovedValues = JSON.parse('{{ loved_values|safe }}');
+    const displayHabits = [
+        {% for h in display_habits %}"{{ h.name }}"{% if not forloop.last %}, {% endif %}{% endfor %}
+    ];
+
+    // --- Dashboard Summary Logic ---
+    function updateSummary() {
+        // 1. Total Days Logged
+        const daysLogged = habitData.length;
+        document.getElementById('totalDaysLogged').innerText = daysLogged;
+
+        // 2. Avg Completion Rate
+        let totalHabitSlots = 0;
+        let completedSlots = 0;
+        habitData.forEach(day => {
+            displayHabits.forEach(h => {
+                totalHabitSlots++;
+                if(day[h] === 1) completedSlots++;
+            });
+        });
+        const rate = totalHabitSlots > 0 ? Math.round((completedSlots / totalHabitSlots) * 100) : 0;
+        document.getElementById('habitCompletionRate').innerText = rate + "%";
+
+        // 3. Top Connection
+        const topConn = lovedLabels.length > 0 ? lovedLabels[0] : "None";
+        document.getElementById('topConnection').innerText = topConn;
+    }
+    updateSummary();
+
+    // --- Chart 1: Habits (Stacked Bar for visual density) ---
+    const chartLabels = habitData.map(d => d.date.slice(8, 10)); // Day of month
+    
+    // Generate beautiful gradients
+    function getGradient(ctx, colorStart, colorEnd) {
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, colorStart);
+        gradient.addColorStop(1, colorEnd);
+        return gradient;
+    }
+
+    // Palette
+    const palette = [
+        ['#4facfe', '#00f2fe'], // Blue
+        ['#43e97b', '#38f9d7'], // Green
+        ['#fa709a', '#fee140'], // Pink/Yellow
+        ['#667eea', '#764ba2'], // Purple
+        ['#ff9a9e', '#fecfef'], // Pastel Red
+        ['#a18cd1', '#fbc2eb']  // Lavender
+    ];
+
+    const datasets = displayHabits.map((habitName, index) => {
+        const colors = palette[index % palette.length];
+        return {
+            label: habitName,
+            data: habitData.map(d => d[habitName]), // 1 or 0
+            backgroundColor: function(context) {
+                const chart = context.chart;
+                const {ctx, chartArea} = chart;
+                if (!chartArea) return null;
+                return getGradient(ctx, colors[0], colors[1]);
+            },
+            borderRadius: 4,
+            borderSkipped: false,
+            stack: 'combined', // Stack them to see density of day
+            barPercentage: 0.6,
+            categoryPercentage: 0.8
+        };
+    });
+
+    const ctxHabit = document.getElementById('habitChart').getContext('2d');
+    new Chart(ctxHabit, {
+        type: 'bar',
+        data: { labels: chartLabels, datasets: datasets },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: { 
+                    stacked: true, 
+                    grid: { display: false },
+                    title: { display: true, text: 'Day of Month', font: {size: 10, weight: 'bold', family: 'Inter'} }
+                },
+                y: { 
+                    stacked: true, 
+                    display: false // Hide Y axis numbers for clean look
+                }
+            },
+            plugins: {
+                legend: { position: 'top', labels: { usePointStyle: true, padding: 20, font: {family: 'Inter'} } },
+                tooltip: {
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    titleColor: '#000',
+                    bodyColor: '#444',
+                    borderColor: '#ddd',
+                    borderWidth: 1,
+                    callbacks: {
+                        label: function(context) {
+                            return context.raw === 1 ? "✅ " + context.dataset.label : "";
+                        }
+                    },
+                    filter: function(item) { return item.raw === 1; } // Only show completed
+                }
+            }
+        }
+    });
+
+    // --- Chart 2: Loved Someone (Horizontal Bar) ---
+    const ctxLoved = document.getElementById('lovedChart').getContext('2d');
+    new Chart(ctxLoved, {
+        type: 'bar',
+        data: {
+            labels: lovedLabels.slice(0, 8), // Top 8
+            datasets: [{
+                label: 'Mentions',
+                data: lovedValues.slice(0, 8),
+                backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                borderRadius: 20,
+                barThickness: 15
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { display: false },
+                y: { grid: { display: false }, ticks: { font: {family: 'Inter', weight: '600'} } }
+            }
+        }
+    });
+
+    // Populate Top List Text
+    const topList = document.getElementById('topLovedList');
+    lovedLabels.slice(0, 5).forEach((name, index) => {
+        const count = lovedValues[index];
+        const item = document.createElement('a');
+        item.className = "list-group-item list-group-item-action d-flex justify-content-between align-items-center border-0 px-2";
+        item.innerHTML = `
+            <span><span class="text-muted small mr-2">#${index+1}</span> ${name}</span>
+            <span class="badge badge-danger badge-pill">${count}</span>
+        `;
+        topList.appendChild(item);
+    });
+</script>
+
+</body>
+</html>

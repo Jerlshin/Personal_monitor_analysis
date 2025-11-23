@@ -1,603 +1,468 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enhanced Interactive Calendar</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <title>Interactive Calendar - User Monitoring</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/calendar_styles.css' %}"> 
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .calendar-header h2 { margin: 0; color: var(--primary-color); font-weight: 800; }
+        .nav-arrow { background: none; border: none; font-size: 1.5rem; color: var(--text-light); cursor: pointer; transition: 0.2s; }
+        .nav-arrow:hover { color: var(--primary-color); transform: scale(1.2); }
+        .bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 30px; }
+        @media (max-width: 900px) { .bottom-row { grid-template-columns: 1fr; } }
+        .radio-group { display: flex; gap: 20px; margin-top: 10px; }
+        .radio-group label { font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+    </style>
 </head>
 <body>
-    <button class="home-button" onclick="window.location.href='{% url 'home' %}'">Home</button>
-    <button class="logout-button" onclick="window.location.href='{% url 'logout' %}'">Logout</button>
 
-    <div class="container">
-        <!-- Calendar Container -->
-        <div class="calendar-container">
+    <nav class="navbar" id="mainNav">
+        <div class="navbar-brand">LifeMonitor</div>
+        <div class="nav-links">
+            <a href="{% url 'home' %}" class="nav-item">Home</a>
+            <a href="{% url 'logout' %}" class="nav-item btn-logout">Logout</a>
+        </div>
+    </nav>
+
+    <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+        <!-- Calendar Section -->
+        <div class="glass-container animate-fade-up">
             <div class="calendar-header">
-                <button id="prevMonth">&laquo;</button>
-                <h2 id="monthYear"></h2>
-                <button id="nextMonth">&raquo;</button>
+                <button class="nav-arrow" id="prevMonth">&laquo;</button>
+                <h2 id="monthYear">Month Year</h2>
+                <button class="nav-arrow" id="nextMonth">&raquo;</button>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: bold; color: var(--text-light); margin-bottom: 10px;">
+                <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
             </div>
             <div class="calendar-grid" id="calendarGrid"></div>
         </div>
 
-        <!-- Bottom Containers -->
-        <div class="bottom-container">
+        <!-- Bottom Section -->
+        <div class="bottom-row">
             <!-- To-Do List -->
-            <div class="todo-container">
-                <div class="todo-header">
-                    <h3>To-Do List </h3>
-                </div>
-                <form id="todoForm">
-                    <input type="text" id="todoInput" placeholder="Enter long-term task..." required>
-                    <button type="submit">Add To-Do List</button>
+            <div class="glass-container animate-fade-up delay-1">
+                <h3 style="color: var(--text-dark); border-bottom: 2px solid rgba(0,0,0,0.05); padding-bottom: 10px; margin-bottom: 20px;">
+                    📌 Long-term To-Do
+                </h3>
+                <form id="todoForm" style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <input type="text" id="todoInput" class="form-control" placeholder="Add a new task..." required>
+                    <button type="submit" class="btn btn-primary">Add</button>
                 </form>
-                <ul id="todoList" class="task-list"></ul>
+                <div id="todoList" class="task-list-container"></div>
             </div>
 
             <!-- Consolidated Tasks -->
-            <div class="consolidated-container">
-                <div class="consolidated-header">
-                    <h3>Consolidated Tasks</h3>
-                </div>
-                <ul id="consolidatedTaskList" class="task-list"></ul>
+            <div class="glass-container animate-fade-up delay-2">
+                <h3 style="color: var(--text-dark); border-bottom: 2px solid rgba(0,0,0,0.05); padding-bottom: 10px; margin-bottom: 20px;">
+                    📋 All Tasks (Swipe to Complete)
+                </h3>
+                <div id="consolidatedTaskList" class="task-list-container"></div>
             </div>
         </div>
     </div>
 
-
-
-    <!-- Modal for Task Input -->
+    <!-- Standard Task Modal -->
     <div class="modal" id="taskModal">
-        <div class="modal-content">
-            <h3 id="modalTitle">Tasks for </h3>
-            <form id="taskForm">
-                <input type="text" id="taskName" placeholder="Enter Task Name" required>
-
-                <div>
-                    <label>Task Type:</label>
-                    <label>
-                        <input type="radio" name="taskType" value="normal" checked> Normal Task
-                    </label>
-                    <label>
-                        <input type="radio" name="taskType" value="day"> Day Task
-                    </label>
+        <div class="glass-container modal-content animate-fade-up">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 id="modalTitle" style="margin: 0; color: var(--primary-color);">Tasks</h3>
+                <span onclick="closeModal()" style="font-size: 1.5rem; cursor: pointer; color: var(--text-light);">&times;</span>
+            </div>
+            <form id="taskForm" style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(0,0,0,0.1);">
+                <div class="form-group">
+                    <input type="text" id="taskName" class="form-control" placeholder="What needs to be done?" required>
+                    <div class="radio-group">
+                        <label><input type="radio" name="taskType" value="normal" checked> Normal</label>
+                        <label><input type="radio" name="taskType" value="day"> Day Task</label>
+                    </div>
                 </div>
-                
-                <button type="submit">Add Task</button>
+                <button type="submit" class="btn btn-primary btn-block">Add Task</button>
             </form>
+            <div id="taskList" class="task-list-container" style="height: 300px;"></div>
+        </div>
+    </div>
 
-            <ul class="task-list" id="taskList"></ul>
-            
-            <button class="close-btn" onclick="closeModal()">Close</button>
-        </div>        
+    <!-- DYNAMIC CONFIRMATION MODAL -->
+    <div id="dynamicConfirmModal" class="confirm-modal">
+        <div class="confirm-content">
+            <div id="confirmIcon" class="confirm-icon"></div>
+            <h3 id="confirmTitle" class="confirm-title">Title</h3>
+            <p id="confirmText" class="confirm-text">Message text goes here.</p>
+            <div class="confirm-actions">
+                <button id="confirmCancelBtn" class="confirm-btn-no">Cancel</button>
+                <button id="confirmYesBtn" class="confirm-btn-yes">Confirm</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        
+        // --- Auth & Config ---
         function getCookie(name) {
-            const cookies = document.cookie.split('; ').map(cookie => cookie.split('='));
-            const cookie = cookies.find(([key]) => key === name);
-            return cookie ? decodeURIComponent(cookie[1]) : null;
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift());
         }
-        
         const csrftoken = getCookie('csrftoken');
 
-        // DOM Elements
+        // --- DOM Elements ---
         const calendarGrid = document.getElementById('calendarGrid');
         const monthYear = document.getElementById('monthYear');
-        const todoInput = document.getElementById('todoInput');
-        const todoList = document.getElementById('todoList');
-        const consolidatedTaskList = document.getElementById('consolidatedTaskList');
-        const todoForm = document.getElementById('todoForm');
-
         const taskModal = document.getElementById('taskModal');
         const modalTitle = document.getElementById('modalTitle');
-        const taskList = document.getElementById('taskList');
-        const taskForm = document.getElementById('taskForm');
-        const taskNameInput = document.getElementById('taskName');
-        const taskTypeInputs = document.getElementsByName('taskType');
-
-        let currentDate = new Date(); // Tracks the currently displayed month/year
-        let selectedDate = null; // Tracks the currently selected date for task operations
-
-        /**
-        * Renders the calendar for the current month/year.
-        */
-        const renderCalendar = async () => {
-            calendarGrid.innerHTML = ''; // Clear the calendar grid
         
-            // Getting current year and month 
+        let currentDate = new Date();
+        let selectedDate = null;
+
+        // --- DYNAMIC CONFIRMATION LOGIC ---
+        let confirmResolver = null;
+        const confirmModal = document.getElementById('dynamicConfirmModal');
+        const confirmIcon = document.getElementById('confirmIcon');
+        const confirmTitle = document.getElementById('confirmTitle');
+        const confirmText = document.getElementById('confirmText');
+        const confirmYesBtn = document.getElementById('confirmYesBtn');
+        const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+
+        function showConfirmModal(type) {
+            return new Promise((resolve) => {
+                confirmResolver = resolve;
+                confirmModal.classList.remove('modal-warning', 'modal-success');
+                
+                if (type === 'warning') {
+                    confirmModal.classList.add('modal-warning');
+                    confirmIcon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+                    confirmTitle.textContent = "Are you sure?";
+                    confirmText.textContent = "Do you really want to delete this task? This process cannot be undone.";
+                    confirmYesBtn.textContent = "Delete";
+                } else if (type === 'success') {
+                    confirmModal.classList.add('modal-success');
+                    confirmIcon.innerHTML = '<i class="fas fa-check"></i>';
+                    confirmTitle.textContent = "Complete Task?";
+                    confirmText.textContent = "Do you want to mark this as done and delete it?";
+                    confirmYesBtn.textContent = "Complete";
+                }
+                confirmModal.classList.add('show');
+            });
+        }
+
+        function hideConfirmModal(result) {
+            confirmModal.classList.remove('show');
+            if (confirmResolver) {
+                confirmResolver(result);
+                confirmResolver = null;
+            }
+        }
+
+        confirmYesBtn.onclick = () => hideConfirmModal(true);
+        confirmCancelBtn.onclick = () => hideConfirmModal(false);
+        confirmModal.onclick = (e) => { if(e.target === confirmModal) hideConfirmModal(false); };
+
+        // --- 1. Calendar Logic ---
+        const renderCalendar = async () => {
+            calendarGrid.innerHTML = '';
             const year = currentDate.getFullYear();
             const month = currentDate.getMonth();
-        
-            // Setting Month and Year Text 
             monthYear.textContent = `${currentDate.toLocaleString('default', { month: 'long' })} ${year}`;
-        
-            // Calculating the First Day and Total Days in the month
-            const firstDay = new Date(Date.UTC(year, month, 1)).getUTCDay(); // First day of the month in UTC
-            const daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate(); // Total days in the month (UTC)
-        
-            const today = new Date(); // Today's date
-        
-            // Fetch tasks for the current month
+            
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const today = new Date();
+
             let monthTasks = [];
             try {
-                const response = await fetch(`/api/calendar-tasks/?month=${month + 1}&year=${year}`);
-                if (!response.ok) throw new Error('Failed to fetch tasks');
-                monthTasks = await response.json();
-        
-            } catch (error) {
-                console.error('Error fetching tasks:', error);
+                const res = await fetch(`/api/calendar-tasks/?month=${month + 1}&year=${year}`);
+                if (res.ok) monthTasks = await res.json();
+            } catch (e) { console.error(e); }
+
+            for(let i=0; i<firstDay; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'calendar-cell inactive';
+                calendarGrid.appendChild(cell);
             }
-        
-            // Add empty cells for days before the 1st of the month
-            for (let i = 0; i < firstDay; i++) {
-                const emptyCell = document.createElement('div');
-                emptyCell.classList.add('calendar-cell', 'inactive');
-                calendarGrid.appendChild(emptyCell);
-            }
-        
-            // Add cells for each day of the month
+
             for (let day = 1; day <= daysInMonth; day++) {
-                const dayCell = document.createElement('div');
-                dayCell.classList.add('calendar-cell'); // adds CSS 
-                dayCell.textContent = day;   // sets the cell's text to the current day number
-        
-                // Highlight today's date
-                if (
-                    day === today.getDate() &&
-                    month === today.getMonth() &&
-                    year === today.getFullYear()
-                ) {
-                    dayCell.classList.add('today');
+                const cell = document.createElement('div');
+                cell.className = 'calendar-cell';
+                if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) cell.classList.add('today');
+
+                const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+                const dayTasks = monthTasks.filter(t => t.date === dateStr);
+
+                let html = `<div class="day-number">${day}</div>`;
+                if(dayTasks.length > 0) {
+                    html += `<div class="task-indicators">`;
+                    if(dayTasks.some(t => t.task_type === 'normal')) html += `<span class="dot normal"></span>`;
+                    if(dayTasks.some(t => t.task_type === 'day')) html += `<span class="dot day"></span>`;
+                    html += `</div>`;
                 }
-        
-                // Get the current date in 'YYYY-MM-DD' format
-                const currentDay = `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-                // console.log(`Checking tasks for date: ${currentDay}`); // Debugging: Log current date
-        
-                // Filter tasks for the current date
-                const tasks = monthTasks.filter(task => task.date === currentDay);
-                // console.log(`Tasks for ${currentDay}:`, tasks); // Debugging: Log tasks for the day
-        
-                if (tasks.length > 0) {
-                    const indicator = document.createElement('div');
-                    indicator.classList.add('task-indicator');
-                    let hasNormalTask = false;
-                    let hasDayTask = false;
-        
-                    tasks.forEach(task => {
-                        if (task.task_type === 'normal') hasNormalTask = true;
-                        if (task.task_type === 'day') hasDayTask = true;
-                    });
-        
-                    if (hasNormalTask) {
-                        const normalDot = document.createElement('span');
-                        normalDot.classList.add('normal');
-                        indicator.appendChild(normalDot);
-                        dayCell.classList.add('task-day-normal');
-                    }
-                    if (hasDayTask) {
-                        const dayDot = document.createElement('span');
-                        dayDot.classList.add('day');
-                        indicator.appendChild(dayDot);
-                        dayCell.classList.add('task-day-day');
-                    }
-        
-                    dayCell.appendChild(indicator);
-                }
-        
-                // Open modal on clicking a day
-                dayCell.addEventListener('click', () => openModal(day));
-                calendarGrid.appendChild(dayCell);
-            }
-        };
-        
-
-        /**
-        * Loads tasks for the selected date into the modal.
-        */
-        const loadTasks = async () => {
-            taskList.innerHTML = '';  // Clear previous tasks
-
-            try {
-                // Get the selected date in 'YYYY-MM-DD' format
-                const selectedDateInISO = `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, '0')}-${selectedDate.getDate().toString().padStart(2, '0')}`;
-
-                // Fetch tasks for the selected date
-                const response = await fetch(`/api/load-tasks/?date=${selectedDateInISO}`);
-
-                // If the response is not okay, throw an error
-                if (!response.ok) {
-                    throw new Error('Failed to fetch tasks');
-                }
-
-                // Parse the fetched tasks
-                const tasks = await response.json();
-
-                // Loop through tasks and display them
-                tasks.forEach((task) => {
-                    const taskItem = document.createElement('li');
-
-                    // Task indicator
-                    const taskIndicator = document.createElement('div');
-                    taskIndicator.classList.add('model_task-indicator');
-                    taskIndicator.style.backgroundColor = task.task_type === 'normal' ? '#0d47a1' : '#e65100';
-
-                    // Task name
-                    const taskName = document.createElement('span');
-                    taskName.textContent = task.name;
-                    taskName.classList.add('task-name');
-
-                    // Delete button
-                    const deleteButton = document.createElement('button');
-                    deleteButton.textContent = 'Delete';
-                    deleteButton.addEventListener('click', () => deleteTask(task.id));
-
-                    taskItem.appendChild(taskIndicator);
-                    taskItem.appendChild(taskName);
-                    taskItem.appendChild(deleteButton);
-                    taskList.appendChild(taskItem);
-                });
-            } catch (error) {
-                console.error('Error loading tasks:', error); // Log any error during task loading
+                cell.innerHTML = html;
+                cell.onclick = () => openModal(day);
+                calendarGrid.appendChild(cell);
             }
         };
 
-        
-
-
-        /**
-        * Adds a new task for the selected date.
-        * @param {Event} event - The form submission event.
-        */
-        const addTask = async (event) => {
-            event.preventDefault();
-            const taskName = taskNameInput.value.trim();
-            const taskType = document.querySelector('input[name="taskType"]:checked').value;
-            if (!taskName) return;
-
-            try {
-                const selectedDateInISO = `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, '0')}-${selectedDate.getDate().toString().padStart(2, '0')}`;
-                await fetch('/api/calendar-tasks/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrftoken,
-                    },
-                    body: JSON.stringify({
-                        name: taskName,
-                        task_type: taskType,
-                        date: selectedDateInISO
-                    }),
-                });
-
-                loadTasks();
-                renderCalendar();
-                loadConsolidatedTasks();
-
-                taskNameInput.value = "";
-            } catch (error) {
-                console.error('Error adding task:', error);
-            }
-        };
-
-        
-        /**
-        * Deletes a task for the selected date.
-        * @param {number} index - The index of the task to delete.
-        */
-        const deleteTask = async (taskId) => {
-            try {
-                const response = await fetch(`/api/calendar-tasks/${taskId}/`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRFToken': csrftoken,
-                    },
-                });
-
-                if (!response.ok) throw new Error('Failed to delete task');
-
-                loadTasks();
-                renderCalendar();
-                loadConsolidatedTasks();
-            } catch (error) {
-                console.error('Error deleting task:', error);
-            }
-        };
-
-        /**
-         * Opens the task modal for the selected day.
-         * @param {number} day - The day of the month to open tasks for.
-         */
+        // --- 2. Task Management ---
         const openModal = (day) => {
-            selectedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day); // Set the selected date
-            modalTitle.textContent = `Tasks for ${selectedDate.toDateString()}`;
-            taskModal.style.display = 'flex';
-            
-            // Add fade-in effect
-            setTimeout(() => taskModal.classList.add('show'), 10);
-            loadTasks(); // Load tasks for the selected date
+            selectedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+            modalTitle.textContent = selectedDate.toDateString();
+            taskModal.classList.add('show');
+            loadDateTasks();
         };
-        
-        /**
-         * Closes the task modal.
-         */
-        const closeModal = () => {
-            taskModal.style.display = 'none';
-            taskModal.classList.remove('show');
-        };
-        
+        const closeModal = () => taskModal.classList.remove('show');
+        window.onclick = (e) => { if(e.target === taskModal) closeModal(); };
 
+        const getFormattedDate = (date) => `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
 
-        /**
-        * Loads the long-term tasks into the to-do list.
-        */
-        const loadTodoTasks = async () => {
-            // Clear the existing list
-            todoList.innerHTML = '';
-
-            try {
-                // Fetch tasks from the API
-                const response = await fetch('/api/todo-tasks/');
-
-            if (!response.ok) {
-                throw new Error('Failed to load tasks');
-            }
-
-            const tasks = await response.json();
-
-            tasks.forEach((task) => {
-                // Create list item for each task
-                const taskItem = document.createElement('li');
-                taskItem.textContent = task.task_name;
-
-                // Create delete button
-                const deleteButton = document.createElement('button');
-                deleteButton.textContent = 'Done';
-                deleteButton.addEventListener('click', () => deleteTodoTask(task.id));
-
-                // Append elements
-                taskItem.appendChild(deleteButton);
-                todoList.appendChild(taskItem);
+        const loadDateTasks = async () => {
+            const list = document.getElementById('taskList');
+            list.innerHTML = '<p style="text-align:center; color:#aaa;">Loading...</p>';
+            const dateStr = getFormattedDate(selectedDate);
+            const res = await fetch(`/api/load-tasks/?date=${dateStr}`);
+            const tasks = await res.json();
+            list.innerHTML = '';
+            tasks.forEach(task => {
+                const item = document.createElement('div');
+                item.className = `task-item ${task.priority || 'important'}`;
+                item.innerHTML = `
+                    <div class="task-info">
+                        <div class="task-name">${task.name}</div>
+                    </div>
+                    <button class="btn btn-danger btn-sm" onclick="deleteTaskWrapper(${task.id}, 'calendar')"><i class="fas fa-trash"></i></button>
+                `;
+                list.appendChild(item);
             });
-            } catch (error) {
-                console.error('Error loading tasks:', error);
-            }
+            if(tasks.length === 0) list.innerHTML = '<p style="text-align:center; color:#aaa;">No tasks.</p>';
         };
 
-        /**
-        * Adds a new long-term task to the to-do list.
-        * @param {Event} event - The form submission event.
-        */
-        const addTodoTask = async (event) => {
-            event.preventDefault();
-            const todoTask = todoInput.value.trim(); // get the value to be added
+        document.getElementById('taskForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('taskName').value;
+            const type = document.querySelector('input[name="taskType"]:checked').value;
+            await fetch('/api/calendar-tasks/', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken }, body: JSON.stringify({ name, task_type: type, date: getFormattedDate(selectedDate) }) });
+            document.getElementById('taskName').value = '';
+            loadDateTasks(); renderCalendar(); loadConsolidatedTasks();
+        });
 
-            if (!todoTask) return;
-            
-            try {
-                await fetch('/api/todo-tasks/', {
-                    method: 'POST',  // POST - submit data to the server
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrftoken, // Include CSRF token
-                    },
-                    body: JSON.stringify({ task_name: todoTask }), // task_name is defined in the models
-                });
-
-                loadTodoTasks();
-                todoInput.value = '';
-                
-            } catch (error) {
-                console.error('Error adding task:', error);
-            } 
+        // --- 3. To-Do List Logic ---
+        const loadTodoTasks = async () => {
+            const list = document.getElementById('todoList');
+            const res = await fetch('/api/todo-tasks/');
+            const tasks = await res.json();
+            list.innerHTML = '';
+            tasks.forEach(task => {
+                const item = document.createElement('div');
+                item.className = 'task-item';
+                // UPDATED STRUCTURE to use task-info for better layout & wrapping
+                item.innerHTML = `
+                    <div class="task-info">
+                        <div class="task-name">${task.task_name}</div>
+                    </div>
+                    <button class="btn btn-danger btn-sm" onclick="deleteTaskWrapper(${task.id}, 'todo')"><i class="fas fa-trash"></i></button>
+                `;
+                list.appendChild(item);
+            });
         };
 
+        document.getElementById('todoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const val = document.getElementById('todoInput').value;
+            await fetch('/api/todo-tasks/', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken }, body: JSON.stringify({ task_name: val }) });
+            document.getElementById('todoInput').value = '';
+            loadTodoTasks();
+        });
+
+        // --- 4. Consolidated Tasks & SWIPE Logic ---
         
-        /**
-        * Deletes a long-term task from the to-do list.
-        * @param {number} index - The index of the task to delete.
-        */
-        const deleteTodoTask = async (taskId) => {
-            const confirmation = confirm('Are you sure you want to delete this task?');
-            if (confirmation) {
-                try {
-                    const response = await fetch(`/api/todo-tasks/${taskId}/`, {
-                        method: 'DELETE', // DELETE is used to request the removal of a specific task from the server
-                        headers: {
-                            'X-CSRFToken': csrftoken, 
-                        },
-                    });
-                
-                    if (!response.ok) {
-                        throw new Error('Failed to delete task');
-                    }
-                
-                    loadTodoTasks(); 
-                
-                } catch (error) {
-                    console.error('Error deleting task:', error);
+        const enableSwipe = (element, onComplete) => {
+            let startX = 0, currentX = 0, isSwiping = false, startY = 0, isClick = true;
+            
+            const handleStart = (e) => {
+                if (e.target.closest('.priority-menu') || e.target.closest('.priority-option')) return;
+                startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+                startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+                isSwiping = true; isClick = true;
+                element.classList.add('swiping');
+                element.parentElement.classList.add('active');
+            };
+
+            const handleMove = (e) => {
+                if (!isSwiping) return;
+                currentX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+                const currentY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+                if (Math.abs(currentY - startY) > Math.abs(currentX - startX)) return;
+                if (Math.abs(currentX - startX) > 5) isClick = false;
+                if (diffX > 0) { 
+                    if(e.cancelable) e.preventDefault();
+                    element.style.transform = `translateX(${currentX - startX}px)`;
+                }
+            };
+
+            const handleMoveMouse = (e) => {
+                if (!isSwiping) return;
+                currentX = e.clientX;
+                const diffX = currentX - startX;
+                if (Math.abs(diffX) > 5) isClick = false;
+                if (diffX > 0) {
+                    element.style.transform = `translateX(${diffX}px)`;
                 }
             }
+
+            const handleEnd = async () => {
+                if (!isSwiping) return;
+                isSwiping = false;
+                element.classList.remove('swiping');
+                
+                // Calculate diff based on touch or mouse
+                let diff = 0;
+                if(currentX !== 0) diff = currentX - startX;
+                
+                const threshold = element.offsetWidth * 0.4;
+
+                if (!isClick && diff > threshold) {
+                    element.classList.add('slide-out');
+                    onComplete(element);
+                } else {
+                    if (!isClick && diff > 0) {
+                        element.classList.add('snap-back');
+                        element.style.transform = 'translateX(0)';
+                        setTimeout(() => {
+                            element.classList.remove('snap-back');
+                            element.parentElement.classList.remove('active');
+                        }, 400);
+                    } else {
+                        element.parentElement.classList.remove('active');
+                        element.style.transform = 'translateX(0)';
+                    }
+                }
+                // Reset coords
+                currentX = 0; 
+            };
+
+            element.addEventListener('touchstart', handleStart, {passive: false});
+            element.addEventListener('touchmove', handleMove, {passive: false});
+            element.addEventListener('touchend', handleEnd);
+            element.addEventListener('mousedown', handleStart);
+            window.addEventListener('mousemove', handleMoveMouse);
+            window.addEventListener('mouseup', handleEnd);
+            
+            element.addEventListener('click', (e) => {
+                if (isClick && !e.target.closest('.priority-menu')) {
+                    togglePriorityMenu(e, element);
+                }
+            });
         };
+
+        function togglePriorityMenu(e, item) {
+            if(item.classList.contains('slide-out')) return;
+            e.stopPropagation();
+            
+            const wrapper = item.parentElement;
+            document.querySelectorAll('.priority-menu').forEach(m => m.classList.remove('show'));
+            document.querySelectorAll('.swipe-wrapper').forEach(w => w.classList.remove('menu-open'));
+            
+            const menu = item.querySelector('.priority-menu');
+            if (menu && !menu.classList.contains('show')) {
+                menu.classList.add('show');
+                wrapper.classList.add('menu-open');
+            } else if (menu) {
+                menu.classList.remove('show');
+                wrapper.classList.remove('menu-open');
+            }
+        }
 
         const loadConsolidatedTasks = async () => {
-            consolidatedTaskList.innerHTML = ''; // Clear existing tasks
-            const tasks = []; // Array to hold all tasks
-        
-            try {
-                // Fetch date-specific tasks
-                const calendarResponse = await fetch('/api/calendar-tasks/');
-                if (calendarResponse.ok) {
-                    const calendarTasks = await calendarResponse.json();        
-                    calendarTasks.forEach(task => {
-                        tasks.push({
-                            id: task.id, // Include the task ID
-                            name: task.name,
-                            date: task.date,
-                            priority: task.priority || 'important' // Default priority
-                        });
-                    });
-                } else {
-                    console.error("Failed to fetch calendar tasks:", calendarResponse.statusText);
-                }
-        
-                // Render each task in the consolidated task list
-                tasks.forEach(task => {
-                    const taskItem = document.createElement('li'); // Create task item
-                    taskItem.classList.add('consolidated-task-item', task.priority); // Add classes based on priority
-                    taskItem.setAttribute('data-task-id', task.id); // Add task ID to the task item
+            const list = document.getElementById('consolidatedTaskList');
+            const res = await fetch('/api/calendar-tasks/');
+            const tasks = await res.json();
+            list.innerHTML = '';
+            
+            tasks.forEach(task => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'swipe-wrapper';
 
-                    // Create and append task name
-                    const taskName = document.createElement('span');
-                    taskName.textContent = task.name;
-                    taskName.classList.add('consolidated-task-name');
-                    taskItem.appendChild(taskName);
-        
-                    // Create and append task date
-                    const taskDate = document.createElement('span');
-                    taskDate.textContent = task.date;
-                    taskDate.classList.add('consolidated-task-date');
-                    taskItem.appendChild(taskDate);
-        
-                    // Create priority menu and append options
-                    const priorityMenu = document.createElement('div');
-                    priorityMenu.classList.add('priority-menu');
-                    
-                    ['high', 'medium', 'important'].forEach(priority => {
-                        const option = document.createElement('div');
-                        option.classList.add('priority-option');
-                        option.textContent = priority.replace('-', ' ').toUpperCase();
-                        option.addEventListener('click', async (e) => {
-                            e.stopPropagation(); // Prevent event bubbling
-                            await setPriority(task, priority); // Update task priority
-                            closePriorityMenu(); // Close the menu
-                        });
-                        priorityMenu.appendChild(option);
-                    });
-                    taskItem.appendChild(priorityMenu);
-        
-                    // Add event listener for task selection and menu toggle
-                    taskItem.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        toggleTaskSelection(taskItem); // Highlight the task
-                        togglePriorityMenu(taskItem, priorityMenu); // Show the priority menu
-                    });
-        
-                    // Append task item to the consolidated task list
-                    consolidatedTaskList.appendChild(taskItem);
-                });
-        
-                // Close all open menus when clicking outside
-                document.addEventListener('click', closePriorityMenu);
-        
-            } catch (error) {
-                console.error("Error loading consolidated tasks:", error);
-            }
-        };
-        // Update the task's priority in calendar tasks
-        async function setPriority(task, priority) {
-            if (!task.id) {
-                console.error("Task ID is undefined. Cannot update priority.");
-                return;
-            }
+                const bg = document.createElement('div');
+                bg.className = 'swipe-bg';
+                bg.innerHTML = '<i class="fas fa-check"></i>';
 
-            try {
-                // Send a PATCH request to update the task's priority in the backend
-                const response = await fetch(`/api/calendar-tasks/${task.id}/`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrftoken
-                    },
-                    body: JSON.stringify({ priority }) // Include the updated priority in the request body
-                });
-
-                if (response.ok) {
-                    // Task priority successfully updated on the server
-                    console.log("Task priority updated successfully!");
-
-                    // Locate the corresponding task item in the DOM using its ID
-                    const taskItem = document.querySelector(`[data-task-id="${task.id}"]`);
-
-                    if (taskItem) {
-                        // Remove any old priority classes
-                        taskItem.classList.remove('high', 'medium', 'important');
-
-                        // Add the new priority class to apply updated styles
-                        taskItem.classList.add(priority);
+                const item = document.createElement('div');
+                item.className = `task-item ${task.priority || 'important'}`;
+                item.id = `task-consolidated-${task.id}`;
+                
+                item.innerHTML = `
+                    <div class="task-info">
+                        <div class="task-name">${task.name}</div>
+                        <div class="task-date">${task.date}</div>
+                    </div>
+                    <div class="priority-menu" id="menu-${task.id}">
+                        <div class="priority-option" onclick="setPriority(${task.id}, 'high')"><span class="dot" style="background:#ff4757"></span> High</div>
+                        <div class="priority-option" onclick="setPriority(${task.id}, 'medium')"><span class="dot" style="background:#ffa502"></span> Medium</div>
+                        <div class="priority-option" onclick="setPriority(${task.id}, 'important')"><span class="dot" style="background:#6c757d"></span> Normal</div>
+                    </div>
+                `;
+                
+                enableSwipe(item, async (el) => {
+                    const confirmed = await showConfirmModal('success');
+                    if (confirmed) {
+                        await deleteTask(task.id, 'calendar');
                     } else {
-                        console.error(`Task element with ID ${task.id} not found in DOM.`);
+                        el.classList.remove('slide-out');
+                        el.classList.add('snap-back');
+                        el.style.transform = 'translateX(0)';
+                        setTimeout(() => {
+                            el.classList.remove('snap-back');
+                            wrapper.classList.remove('active');
+                        }, 400);
                     }
-                } else {
-                    // Handle server-side errors gracefully
-                    const errorData = await response.json();
-                    console.error("Failed to update task priority:", errorData);
-                }
-            } catch (error) {
-                // Log client-side errors for debugging purposes
-                console.error("Error updating task priority:", error);
-            }
-        }
+                });
 
-
-        // Toggle the visibility of the priority menu
-        function togglePriorityMenu(taskItem, priorityMenu) {
-            const allMenus = document.querySelectorAll('.priority-menu');
-            allMenus.forEach(menu => {
-                if (menu !== priorityMenu) {
-                    menu.style.display = 'none'; // Hide other menus
-                }
+                wrapper.appendChild(bg);
+                wrapper.appendChild(item);
+                list.appendChild(wrapper);
             });
-            priorityMenu.style.display = priorityMenu.style.display === 'block' ? 'none' : 'block'; // Toggle current menu
-        }
+        };
+
+        window.setPriority = async (id, priority) => {
+            await fetch(`/api/calendar-tasks/${id}/`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken }, body: JSON.stringify({ priority }) });
+            loadConsolidatedTasks();
+        };
+
+        window.deleteTask = async (id, type) => {
+            const url = type === 'calendar' ? `/api/calendar-tasks/${id}/` : `/api/todo-tasks/${id}/`;
+            await fetch(url, { method: 'DELETE', headers: { 'X-CSRFToken': csrftoken } });
+            if(type === 'calendar') { loadDateTasks(); renderCalendar(); loadConsolidatedTasks(); }
+            else { loadTodoTasks(); }
+        };
         
-
-
-        // Close all open priority menus
-        function closePriorityMenu() {
-            const openMenus = document.querySelectorAll('.priority-menu');
-            openMenus.forEach(menu => {
-                menu.style.display = 'none';
-            });
+        window.deleteTaskWrapper = async (id, type) => {
+             const confirmed = await showConfirmModal('warning');
+             if(confirmed) deleteTask(id, type);
         }
 
-        // Highlight the selected task
-        function toggleTaskSelection(taskItem) {
-            const allTasks = document.querySelectorAll('.consolidated-task-item');
-            allTasks.forEach(task => task.classList.remove('selected')); // Remove selection from other tasks
-            taskItem.classList.add('selected'); // Highlight the current task
-        }
-
-        // Remove task selection when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.consolidated-task-item')) {
-                const allTasks = document.querySelectorAll('.consolidated-task-item');
-                allTasks.forEach(task => task.classList.remove('selected')); // Deselect all tasks
-            }
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.priority-menu').forEach(m => m.classList.remove('show'));
+            document.querySelectorAll('.swipe-wrapper').forEach(w => w.classList.remove('menu-open'));
         });
 
-        // Add event listeners for navigation and forms
-        taskForm.addEventListener('submit', addTask);
-        todoForm.addEventListener('submit', addTodoTask);
-        document.getElementById('prevMonth').addEventListener('click', () => {
-            currentDate.setMonth(currentDate.getMonth() - 1); // Navigate to the previous month
-            renderCalendar();
-        });
-        document.getElementById('nextMonth').addEventListener('click', () => {
-            currentDate.setMonth(currentDate.getMonth() + 1); // Navigate to the next month
-            renderCalendar();
+        document.getElementById('prevMonth').onclick = () => { currentDate.setMonth(currentDate.getMonth()-1); renderCalendar(); };
+        document.getElementById('nextMonth').onclick = () => { currentDate.setMonth(currentDate.getMonth()+1); renderCalendar(); };
+
+        let lastScroll = 0;
+        const navbar = document.getElementById('mainNav');
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            if (currentScroll > lastScroll && currentScroll > 100) navbar.classList.add('nav-hidden');
+            else navbar.classList.remove('nav-hidden');
+            lastScroll = currentScroll;
         });
 
-        // Initial rendering of the calendar and task lists
         renderCalendar();
         loadTodoTasks();
         loadConsolidatedTasks();
+
     </script>
 </body>
 </html>

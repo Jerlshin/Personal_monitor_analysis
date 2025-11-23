@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - User Monitoring</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .main-wrapper {
+            width: 100%;
+            max-width: 600px;
+            margin-top: 40px;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Common Navbar -->
+    <nav class="navbar" id="mainNav">
+        <div class="navbar-brand">LifeMonitor</div>
+        <div class="nav-links">
+            <a href="{% url 'home' %}" class="nav-item">Home</a>
+            <a href="{% url 'logout' %}" class="nav-item btn-logout">Logout</a>
+        </div>
+    </nav>
+
+    <div class="main-wrapper">
+        <div class="glass-container animate-fade-up">
+            <h2 style="text-align: center; margin-bottom: 30px; color: var(--primary-color);">{{ title }}</h2>
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <!-- Manual field rendering for better control or loop with auto-styling -->
+                {% for field in form %}
+                <div class="form-group">
+                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                    <small style="display: block; margin-top: 5px; color: var(--text-light); font-size: 0.8rem;">{{ field.help_text }}</small>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                
+                <div style="margin-top: 30px; display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+                    <a href="{% url 'habit_list' %}" class="btn btn-secondary btn-block" style="text-align: center;">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Add styling classes to Django form widgets automatically
+        document.querySelectorAll('input:not([type="checkbox"]), textarea, select').forEach(el => el.classList.add('form-control'));
+        
+        // Smart Navbar Logic
+        let lastScroll = 0;
+        const navbar = document.getElementById('mainNav');
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            if (currentScroll > lastScroll && currentScroll > 100) {
+                navbar.classList.add('nav-hidden');
+            } else {
+                navbar.classList.remove('nav-hidden');
+            }
+            lastScroll = currentScroll;
+        });
+    </script>
+</body>
+</html>

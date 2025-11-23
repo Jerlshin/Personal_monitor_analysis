@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Quote - User Monitoring</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .main-wrapper {
+            width: 100%;
+            max-width: 500px;
+            margin-top: 40px;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Common Navbar -->
+    <nav class="navbar" id="mainNav">
+        <div class="navbar-brand">LifeMonitor</div>
+        <div class="nav-links">
+            <a href="{% url 'home' %}" class="nav-item">Home</a>
+            <a href="{% url 'logout' %}" class="nav-item btn-logout">Logout</a>
+        </div>
+    </nav>
+
+    <div class="main-wrapper">
+        <div class="glass-container animate-fade-up">
+            <h2 style="text-align: center; margin-bottom: 30px; color: var(--primary-color);">Edit Quote</h2>
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label class="form-label">Quote Text</label>
+                    {{ form.text }} <!-- Ensure widget has 'form-control' class in forms.py, or add via JS -->
+                </div>
+                
+                <!-- Hidden Order Field -->
+                <div style="display: none;">
+                    {{ form.order }}
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        {{ form.is_sensed }}
+                        <span style="margin-left: 10px; font-weight: 600; color: var(--success-color);">Is Sensed (Green Highlight)</span>
+                    </label>
+                </div>
+                
+                <div style="margin-top: 30px; display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+                    <a href="{% url 'habit_list' %}" class="btn btn-secondary btn-block" style="text-align: center;">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Add form-control class dynamically if django form rendering doesn't add it
+        document.querySelectorAll('input[type="text"], textarea').forEach(el => el.classList.add('form-control'));
+        
+        // Persist 'quotes' tab on return
+        localStorage.setItem('activeManageTab', 'quotes');
+
+        // Smart Navbar Logic
+        let lastScroll = 0;
+        const navbar = document.getElementById('mainNav');
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            if (currentScroll > lastScroll && currentScroll > 100) {
+                navbar.classList.add('nav-hidden');
+            } else {
+                navbar.classList.remove('nav-hidden');
+            }
+            lastScroll = currentScroll;
+        });
+    </script>
+</body>
+</html>

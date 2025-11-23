@@ -37,18 +37,23 @@ DATABASES = {
 }
 """
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',  # Use PostgreSQL database engine
+#         'NAME': 'postgres',                        # Default PostgreSQL database name
+#         'USER': 'master',                          # PostgreSQL username
+#         'PASSWORD': 'imfreaked@008',               # PostgreSQL password
+#         'HOST': '127.0.0.1', # 'unique-postgres-db',                # Docker service name or container name
+#         'PORT': '5432',                            # PostgreSQL default port
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',  # Use PostgreSQL database engine
-        'NAME': 'postgres',                        # Default PostgreSQL database name
-        'USER': 'master',                          # PostgreSQL username
-        'PASSWORD': 'imfreaked@008',               # PostgreSQL password
-        'HOST': 'unique-postgres-db',                # Docker service name or container name
-        'PORT': '5432',                            # PostgreSQL default port
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
-
 
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

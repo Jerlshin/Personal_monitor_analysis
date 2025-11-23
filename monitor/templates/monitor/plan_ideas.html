@@ -1,424 +1,268 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Plan Timeline</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-  {% load static %}
-  <link rel="stylesheet" href="{% static 'css/plan_ideas_styles.css' %}"> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan Ideas - User Monitoring</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <!-- Font Awesome for Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-  <button class="home-button" onclick="window.location.href='{% url 'home' %}'">Home</button>
-  <button class="logout-button" onclick="window.location.href='{% url 'logout' %}'">Logout</button>
 
-  <div class="container">
-    <h1>Plan Your Ideas</h1>
+    <!-- 1. Common Navbar -->
+    <nav class="navbar" id="mainNav">
+        <div class="navbar-brand">LifeMonitor</div>
+        <div class="nav-links">
+            <a href="{% url 'home' %}" class="nav-item">Home</a>
+            <a href="{% url 'logout' %}" class="nav-item btn-logout">Logout</a>
+        </div>
+    </nav>
 
-    <div class="add-plan-container">
-      <button onclick="toggleForm('add-plan-form')" class="add-form-btn">➕ Add Plan</button>
-      <div id="add-plan-form" class="hidden form-popup">
-        <form id="new-plan-form" class="styled-form">
-          {% csrf_token %}
-          <div class="form-group">
-            <label for="plan-title" class="form-label">Plan Title</label>
-            <input type="text" id="plan-title" name="title" class="form-input" placeholder="Enter a descriptive title for the plan" required>
-          </div>
-          <div class="form-group">
-            <label for="plan-description" class="form-label">Plan Description</label>
-            <textarea id="plan-description" name="description" class="form-textarea" placeholder="Provide a detailed description of the plan" rows="4" required></textarea>
-          </div>
-          <button type="submit" class="add-btn">
-            <span id="plan-submit-text">Submit Plan</span>
-            <div id="plan-spinner" class="spinner"></div>
-          </button>
-        </form>
-      </div>
-    </div>
+    <div style="max-width: 900px; margin: 0 auto; padding: 20px;">
+        
+        <!-- Header -->
+        <div class="animate-fade-up" style="text-align: center; margin-bottom: 50px;">
+            <h1 style="font-weight: 800; margin-bottom: 10px; color: var(--text-dark);">Your Vision Board</h1>
+            <p style="color: var(--text-light); font-size: 1.1rem;">Strategic plans and next steps for your journey.</p>
+        </div>
 
-    <div class="timeline">
-      {% for plan in plans %}
-      <div class="timeline-row" data-plan-id="{{ plan.id }}">
-        <div class="timeline-marker"></div>
-        <div class="plan-branch-container">
-          <div class="plan-content" onclick="toggleBranchPanel('{{ plan.id }}')">
-            <div class="plan-header">
-              <h3>{{ plan.title }}</h3>
-            </div>
-            <p class="plan-desc">{{ plan.description }}</p>
-            <button type="button" onclick="showConfirmation(event, 'plan', '{{ plan.id }}')" class="delete-btn" title="Delete plan"></button>
-          </div>
+        <!-- Timeline Container -->
+        <div class="timeline-wrapper" id="timelineContainer">
+            
+            {% for plan in plans %}
+            <div class="timeline-row" id="plan-row-{{ plan.id }}">
+                <div class="timeline-marker"></div>
+                
+                <!-- Plan Card -->
+                <div class="plan-card" id="plan-card-{{ plan.id }}" onclick="toggleBranchPanel('{{ plan.id }}')">
+                    
+                    <!-- Content Top -->
+                    <div class="plan-header">
+                        <h3 class="plan-title">{{ plan.title }}</h3>
+                        <div class="btn-icon-group">
+                            <button class="btn-icon-action" onclick="deleteItem(event, 'plan', '{{ plan.id }}')" title="Delete Plan">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <p class="plan-desc">{{ plan.description }}</p>
+                    
+                    <!-- Branches Panel (Collapsible) -->
+                    <div id="branch-panel-{{ plan.id }}" class="branch-container" onclick="event.stopPropagation()">
+                        
+                        <!-- Visual threaded list -->
+                        <div class="branch-list" id="branches-list-{{ plan.id }}">
+                            {% for branch in plan.branches.all %}
+                            <div class="branch-item" id="branch-item-{{ branch.id }}">
+                                <div style="display: flex; justify-content: space-between; align-items: start;">
+                                    <div class="branch-title">{{ branch.name }}</div>
+                                    <button class="btn-icon-delete" onclick="deleteItem(event, 'branch', '{{ branch.id }}')" style="color: #bbb;">&times;</button>
+                                </div>
+                                <div class="branch-notes">{{ branch.notes }}</div>
+                            </div>
+                            {% empty %}
+                            <div id="no-branches-{{ plan.id }}" style="padding: 10px; text-align: center; color: #999; font-style: italic;">
+                                <i class="fas fa-seedling" style="margin-bottom: 5px; display: block;"></i>
+                                No steps defined yet.
+                            </div>
+                            {% endfor %}
+                        </div>
 
-          <div id="branch-panel-{{ plan.id }}" class="branch-panel">
-            {% for branch in plan.branches.all %}
-              <div class="branch-connector" data-branch-id="{{ branch.id }}">
-                <div class="branch-card">
-                  <h4>{{ branch.name }}</h4>
-                  <p>{{ branch.notes }}</p>
-                  <button type="button" onclick="showConfirmation(event, 'branch', '{{ branch.id }}')" class="delete-btn" title="Delete branch"></button>
+                        <!-- Add Branch Button -->
+                        <div style="margin-top: 15px; margin-left: 35px;">
+                            <button class="btn btn-sm btn-secondary" onclick="toggleBranchForm('{{ plan.id }}')">
+                                <i class="fas fa-plus"></i> Add Step
+                            </button>
+                        </div>
+
+                        <!-- Add Branch Form (Inline) -->
+                        <div id="add-branch-form-{{ plan.id }}" class="inline-form-container">
+                            <h4 style="margin-bottom: 15px; font-size: 0.95rem; color: var(--primary-color);">Add New Step</h4>
+                            <form onsubmit="submitBranch(event, '{{ plan.id }}')">
+                                <div class="form-group">
+                                    <input type="text" name="branch_name" class="form-control" placeholder="Step Name (e.g., 'Buy Domain')" required>
+                                </div>
+                                <div class="form-group">
+                                    <textarea name="branch_notes" class="form-control" rows="2" placeholder="Details or requirements..."></textarea>
+                                </div>
+                                <div style="display: flex; gap: 10px;">
+                                    <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                                    <button type="button" class="btn btn-secondary btn-sm" onclick="toggleBranchForm('{{ plan.id }}')">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Toggle Bar -->
+                    <div class="branch-toggle-bar">
+                        <span>
+                            <i class="fas fa-layer-group" style="margin-right: 5px;"></i> 
+                            {{ plan.branches.count }} Steps
+                        </span>
+                        <i class="fas fa-chevron-down chevron-icon"></i>
+                    </div>
+
                 </div>
-              </div>
+            </div>
             {% empty %}
-              <p style="color: #9ca3af;">No branches yet.</p>
+            <div style="text-align: center; padding: 60px; color: var(--text-light); background: rgba(255,255,255,0.5); border-radius: 20px;">
+                <i class="fas fa-lightbulb" style="font-size: 3rem; color: #ccc; margin-bottom: 20px;"></i>
+                <h3>Ready to plan your future?</h3>
+                <p>Click the button below to start your first master plan.</p>
+            </div>
             {% endfor %}
-
-            <div class="add-branch-container">
-              <button onclick="event.stopPropagation(); toggleBranchForm('{{ plan.id }}')" class="add-branch-btn">➕ Add Branch</button>
-
-              <div id="add-branch-form-{{ plan.id }}" class="hidden form-popup">
-                <form id="branch-form-{{ plan.id }}" class="styled-form">
-                  {% csrf_token %}
-                  <div class="form-group">
-                    <label for="branch-name-{{ plan.id }}" class="form-label">Branch Name</label>
-                    <input type="text" id="branch-name-{{ plan.id }}" name="branch_name" class="form-input" placeholder="Enter a name for the branch" required>
-                  </div>
-                  <div class="form-group">
-                    <label for="branch-notes-{{ plan.id }}" class="form-label">Branch Notes</label>
-                    <textarea id="branch-notes-{{ plan.id }}" name="branch_notes" class="form-textarea" placeholder="Provide additional notes for the branch" rows="4" required></textarea>
-                  </div>
-                  <input type="hidden" name="plan_id" value="{{ plan.id }}">
-                  <button type="submit" class="add-btn">
-                    <span id="branch-submit-text-{{ plan.id }}">Submit Branch</span>
-                    <div id="branch-spinner-{{ plan.id }}" class="spinner"></div>
-                  </button>
-                </form>
-              </div>
-            </div>
-          </div>
+        
         </div>
-      </div>
-      {% endfor %}
+
     </div>
-  </div>
 
-  <script>
-    // Track active popup to close when clicking outside
-    let activePopup = null;
-    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    <!-- Floating Action Button for New Plan -->
+    <button class="fab-add-plan" onclick="openPlanModal()" title="Add New Plan">
+        <i class="fas fa-plus"></i>
+    </button>
 
-    // Generic AJAX request function
-    async function makeRequest(url, method, data) {
-      const headers = {
-        'X-CSRFToken': csrfToken,
-        'Content-Type': 'application/json'
-      };
-    
-      try {
-        const response = await fetch(url, {
-          method: method,
-          headers: headers,
-          body: JSON.stringify(data)
-        });
-    
-        // console.log("Raw Response:", response); // Add this
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error("HTTP Error:", response.status, errorText);
-          throw new Error(`Request failed: ${response.status} - ${errorText}`);
-        }
-        const jsonData = await response.json();
-        console.log("JSON Response:", jsonData); // Add this
-        return jsonData;
-      } catch (error) {
-        console.error('Request failed:', error);
-        return { success: false, error: error.message };
-      }
-    }
-
-    // Toggle form visibility
-    function toggleForm(id) {
-      const el = document.getElementById(id);
-      el.classList.toggle('hidden');
-    }
-
-    // Toggle branch panel visibility
-    function toggleBranchPanel(planId) {
-      const panel = document.getElementById(`branch-panel-${planId}`);
-      panel.classList.toggle('active');
-    }
-
-    // Toggle branch form visibility
-    function toggleBranchForm(planId) {
-      const form = document.getElementById(`add-branch-form-${planId}`);
-      form.classList.toggle('hidden');
-
-      if (!form.classList.contains('hidden')) {
-        centerElementInViewport(form);
-      }
-    }
-    
-    function centerElementInViewport(element) {
-      const elementRect = element.getBoundingClientRect();
-      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-
-      // Calculate the vertical scroll needed to center the element
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-      const scrollToY = scrollTop + elementRect.top - (viewportHeight / 2) + (elementRect.height / 2);
-
-      // Smoothly scroll to the calculated position
-      window.scrollTo({
-        top: scrollToY,
-        behavior: 'smooth'
-      });
-    }
-
-    // Add new plan via AJAX
-    async function addPlan(event) {
-      event.preventDefault();
-      const form = event.target;
-      const formData = new FormData(form);
-      const data = {
-        title: formData.get('title'),
-        description: formData.get('description')
-      };
-      
-      // Show loading state
-      const submitText = document.getElementById('plan-submit-text');
-      const spinner = document.getElementById('plan-spinner');
-      submitText.style.display = 'none';
-      spinner.style.display = 'block';
-      
-      try {
-        const response = await makeRequest('{% url "add_plan_api" %}', 'POST', data);
-        
-        if (response.success) {
-          const newPlan = createPlanElement(response.plan);
-          document.querySelector('.timeline').insertAdjacentHTML('beforeend', newPlan);
-          form.reset();
-          toggleForm('add-plan-form');
-          
-          // Add event listener to the new branch form
-          const newPlanId = response.plan.id;
-          const newBranchForm = document.getElementById(`branch-form-${newPlanId}`);
-          if (newBranchForm) {
-            newBranchForm.addEventListener('submit', (e) => addBranch(e, newPlanId));
-          }
-        } else {
-          alert('Failed to add plan: ' + (response.error || 'Unknown error'));
-        }
-      } finally {
-        // Restore button state
-        submitText.style.display = 'inline';
-        spinner.style.display = 'none';
-      }
-    }
-
-    // Add new branch via AJAX
-    async function addBranch(event, planId) {
-      event.preventDefault();
-      event.stopPropagation();
-
-      const form = document.getElementById(`branch-form-${planId}`);
-      const formData = new FormData(form);
-
-      // Show loading state
-      const submitText = document.getElementById(`branch-submit-text-${planId}`);
-      const spinner = document.getElementById(`branch-spinner-${planId}`);
-      submitText.style.display = 'none';
-      spinner.style.display = 'block';
-
-      // Prepare data for the request
-      const data = {
-        plan_id: formData.get('plan_id'),
-        branch_name: formData.get('branch_name'),
-        branch_notes: formData.get('branch_notes')
-      };
-
-      try {
-        const response = await makeRequest('{% url "add_branch_api" %}', 'POST', data);
-
-        if (response.success) {
-          const branchPanel = document.getElementById(`branch-panel-${planId}`);
-
-          // Remove "no branches" message if it exists
-          const noBranchesMsg = branchPanel.querySelector('p[style*="color: #9ca3af"]');
-          if (noBranchesMsg) noBranchesMsg.remove();
-
-          // Create and insert the new branch element
-          const newBranchHTML = createBranchElement(response.branch);
-          const tempDiv = document.createElement('div');
-          tempDiv.innerHTML = newBranchHTML;
-          const newBranchElement = tempDiv.firstElementChild; // Use firstElementChild
-
-          // console.log("Corrected New Branch Element:", newBranchElement); // Verify it's the div
-
-          const addBranchContainer = branchPanel.querySelector('.add-branch-container');
-          branchPanel.insertBefore(newBranchElement, addBranchContainer); // Use the DOM element
-
-
-          // Reset the form but keep the panel open
-          form.reset();
-          toggleBranchForm(planId);
-
-          // Ensure the branch panel stays open
-          const panel = document.getElementById(`branch-panel-${planId}`);
-          if (!panel.classList.contains('active')) {
-            panel.classList.add('active');
-          }
-        } else {
-          alert('Failed to add branch: ' + (response.error || 'Unknown error'));
-          console.error('Add branch error:', response);
-        }
-      } catch (error) {
-        alert('An error occurred while adding the branch');
-        console.error('Add branch error:', error);
-      } finally {
-        // Restore button state
-        submitText.style.display = 'inline';
-        spinner.style.display = 'none';
-      }
-    }
-    // Delete plan or branch via AJAX
-    async function processDelete(type, id) {
-      const url = type === 'plan' 
-        ? '{% url "delete_plan_api" %}' 
-        : '{% url "delete_branch_api" %}';
-      
-      const data = type === 'plan' 
-        ? { plan_id: id } 
-        : { branch_id: id };
-      
-      const response = await makeRequest(url, 'POST', data);
-      
-      if (response.success) {
-        if (type === 'plan') {
-          document.querySelector(`.timeline-row[data-plan-id="${id}"]`).remove();
-        } else {
-          const branchElement = document.querySelector(`.branch-connector[data-branch-id="${id}"]`);
-          const branchPanel = branchElement.closest('.branch-panel');
-          branchElement.remove();
-          
-          if (branchPanel.querySelectorAll('.branch-connector').length === 0) {
-            branchPanel.insertAdjacentHTML('afterbegin', '<p style="color: #9ca3af;">No branches yet.</p>');
-          }
-        }
-      } else {
-        alert(`Failed to delete ${type}: ` + (response.error || 'Unknown error'));
-      }
-      
-      hideConfirmation(type, id);
-    }
-
-    // Helper function to create plan HTML
-    function createPlanElement(plan) {
-      return `
-        <div class="timeline-row" data-plan-id="${plan.id}">
-          <div class="timeline-marker"></div>
-          <div class="plan-branch-container">
-            <div class="plan-content" onclick="toggleBranchPanel('${plan.id}')">
-              <div class="plan-header">
-                <h3>${plan.title}</h3>
-              </div>
-              <p class="plan-desc">${plan.description}</p>
-              <button type="button" onclick="showConfirmation(event, 'plan', '${plan.id}')" class="delete-btn" title="Delete plan"></button>
+    <!-- Add Plan Modal -->
+    <div id="planModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Create Vision Plan</h3>
+                <span class="close-modal" onclick="closePlanModal()">&times;</span>
             </div>
-
-            <div id="branch-panel-${plan.id}" class="branch-panel">
-              <p style="color: #9ca3af;">No branches yet.</p>
-
-              <div class="add-branch-container">
-                <button onclick="event.stopPropagation(); toggleBranchForm('${plan.id}')" class="add-branch-btn">➕ Add Branch</button>
-
-                <div id="add-branch-form-${plan.id}" class="hidden form-popup">
-                  <form id="branch-form-${plan.id}" class="styled-form">
-                    {% csrf_token %}
-                    <div class="form-group">
-                      <label for="branch-name-${plan.id}" class="form-label">Branch Name</label>
-                      <input type="text" id="branch-name-${plan.id}" name="branch_name" class="form-input" placeholder="Enter a name for the branch" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="branch-notes-${plan.id}" class="form-label">Branch Notes</label>
-                      <textarea id="branch-notes-${plan.id}" name="branch_notes" class="form-textarea" placeholder="Provide additional notes for the branch" rows="4" required></textarea>
-                    </div>
-                    <input type="hidden" name="plan_id" value="${plan.id}">
-                    <button type="submit" class="add-btn">
-                      <span id="branch-submit-text-${plan.id}">Submit Branch</span>
-                      <div id="branch-spinner-${plan.id}" class="spinner"></div>
-                    </button>
-                  </form>
+            <form id="newPlanForm" onsubmit="submitPlan(event)">
+                <div class="form-group">
+                    <label class="form-label">Plan Title</label>
+                    <input type="text" name="title" class="form-control" placeholder="e.g., Launch Startup" required style="font-size: 1.1rem; font-weight: 600;">
                 </div>
-              </div>
-            </div>
-          </div>
+                <div class="form-group">
+                    <label class="form-label">Vision Description</label>
+                    <textarea name="description" class="form-control" rows="3" placeholder="What is the ultimate goal?"></textarea>
+                </div>
+                <div style="text-align: right; margin-top: 20px;">
+                    <button type="submit" class="btn btn-primary">Create Plan</button>
+                </div>
+            </form>
         </div>
-      `;
-    }
+    </div>
 
-    // Helper function to create branch HTML
-    function createBranchElement(branch) {
-      return `
-        <div class="branch-connector" data-branch-id="${branch.id}">
-          <div class="branch-card">
-            <h4>${branch.name}</h4>
-            <p>${branch.notes}</p>
-            <button type="button" onclick="showConfirmation(event, 'branch', '${branch.id}')" class="delete-btn" title="Delete branch"></button>
-          </div>
-        </div>
-      `;
-    }
+    <script>
+        // --- Auth & Config ---
+        const csrfToken = '{{ csrf_token }}';
 
-    // Confirmation popup functions
-    function showConfirmation(event, type, id) {
-      event.stopPropagation();
-      hideAllConfirmations();
-      
-      let popup = document.getElementById(`confirmation-popup-${type}-${id}`);
-      if (!popup) {
-        popup = document.createElement('div');
-        popup.className = 'confirmation-popup';
-        popup.id = `confirmation-popup-${type}-${id}`;
-        
-        const message = type === 'plan' ? 'Delete this plan?' : 'Delete this branch?';
-        popup.innerHTML = `
-          <p>${message}</p>
-          <div class="confirmation-buttons">
-            <button class="cancel-btn" onclick="hideConfirmation('${type}', '${id}')">No</button>
-            <button class="confirm-btn" onclick="processDelete('${type}', '${id}')">Yes</button>
-          </div>
-        `;
-        
-        const deleteBtn = event.target.closest('.delete-btn');
-        deleteBtn.parentNode.appendChild(popup);
-      }
-      
-      popup.style.display = 'flex';
-      activePopup = popup;
-    }
+        // --- 1. UI Toggles ---
 
-    function hideConfirmation(type, id) {
-      const popup = document.getElementById(`confirmation-popup-${type}-${id}`);
-      if (popup) {
-        popup.style.display = 'none';
-      }
-      activePopup = null;
-    }
+        function openPlanModal() {
+            document.getElementById('planModal').classList.add('show');
+        }
+        function closePlanModal() {
+            document.getElementById('planModal').classList.remove('show');
+        }
+        window.onclick = function(e) {
+            if (e.target == document.getElementById('planModal')) closePlanModal();
+        }
 
-    function hideAllConfirmations() {
-      document.querySelectorAll('.confirmation-popup').forEach(popup => {
-        popup.style.display = 'none';
-      });
-      activePopup = null;
-    }
+        // Expand/Collapse Branch Panel
+        function toggleBranchPanel(planId) {
+            const card = document.getElementById(`plan-card-${planId}`);
+            const panel = document.getElementById(`branch-panel-${planId}`);
+            
+            // Toggle classes for visual changes (chevron rotation, margin)
+            card.classList.toggle('expanded');
+            panel.classList.toggle('active');
+        }
 
-    // Close popup when clicking outside
-    document.addEventListener('click', function(event) {
-      if (activePopup && !activePopup.contains(event.target) && 
-          !event.target.classList.contains('delete-btn')) {
-        hideAllConfirmations();
-      }
-    });
+        // Toggle the Inline Branch Form
+        function toggleBranchForm(planId) {
+            const formDiv = document.getElementById(`add-branch-form-${planId}`);
+            formDiv.classList.toggle('show');
+        }
 
-    // Initialize event listeners
-    document.addEventListener('DOMContentLoaded', function() {
-      // Plan form
-      document.getElementById('new-plan-form').addEventListener('submit', addPlan);
-      
-      // Branch forms
-      document.querySelectorAll('[id^="branch-form-"]').forEach(form => {
-        const planId = form.id.split('-')[2];
-        form.addEventListener('submit', (e) => addBranch(e, planId));
-      });
-    });
-  </script>
+        // --- 2. API Logic (AJAX) ---
+
+        async function submitPlan(e) {
+            e.preventDefault();
+            const form = e.target;
+            const data = {
+                title: form.title.value,
+                description: form.description.value
+            };
+
+            try {
+                const res = await fetch('{% url "add_plan_api" %}', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+                    body: JSON.stringify(data)
+                });
+                const json = await res.json();
+                
+                if (json.success) {
+                    location.reload();
+                } else {
+                    alert('Error: ' + json.error);
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        async function submitBranch(e, planId) {
+            e.preventDefault();
+            const form = e.target;
+            const data = {
+                plan_id: planId,
+                branch_name: form.branch_name.value,
+                branch_notes: form.branch_notes.value
+            };
+
+            try {
+                const res = await fetch('{% url "add_branch_api" %}', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+                    body: JSON.stringify(data)
+                });
+                const json = await res.json();
+
+                if (json.success) {
+                    location.reload(); 
+                } else {
+                    alert('Error: ' + json.error);
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        async function deleteItem(e, type, id) {
+            e.stopPropagation();
+            if (!confirm(`Delete this ${type}?`)) return;
+
+            const url = type === 'plan' ? '{% url "delete_plan_api" %}' : '{% url "delete_branch_api" %}';
+            const body = type === 'plan' ? { plan_id: id } : { branch_id: id };
+
+            try {
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+                    body: JSON.stringify(body)
+                });
+                const json = await res.json();
+
+                if (json.success) {
+                    location.reload();
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        // --- 3. Navbar Scroll Effect ---
+        let lastScroll = 0;
+        const navbar = document.getElementById('mainNav');
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            if (currentScroll > lastScroll && currentScroll > 100) {
+                navbar.classList.add('nav-hidden');
+            } else {
+                navbar.classList.remove('nav-hidden');
+            }
+            lastScroll = currentScroll;
+        });
+    </script>
 </body>
 </html>
