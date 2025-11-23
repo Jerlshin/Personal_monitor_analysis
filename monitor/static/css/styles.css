@@ -57,7 +57,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
-
+/* 
 body {
     font-family: var(--font-family-system);
     background: var(--bg-gradient);
@@ -68,6 +68,76 @@ body {
     padding-top: calc(var(--nav-height) + 20px);
     font-size: var(--font-size-lg);
     letter-spacing: -0.022em;
+} */
+
+
+body {
+    font-family: var(--font-family-system);
+    color: var(--text-dark);
+    min-height: 100vh;
+    line-height: var(--line-height-base);
+    padding-top: calc(var(--nav-height) + 20px);
+    font-size: var(--font-size-lg);
+    letter-spacing: -0.022em;
+    
+    /* Base Background Color (Fallback & Foundation) */
+    background-color: #F0F4F8;
+    
+    /* Critical for positioning pseudo-elements */
+    position: relative;
+    overflow-x: hidden; 
+    z-index: 0;
+}
+
+/* 1. The Moving Orbs */
+body::before, body::after {
+    content: '';
+    position: fixed; /* Fixed so they stay while scrolling */
+    width: 60vw;
+    height: 60vw;
+    border-radius: 50%;
+    filter: blur(80px); /* This creates the soft, atmospheric look */
+    opacity: 0.4;       /* Subtle transparency */
+    z-index: -1;        /* Behind all content */
+    animation: floatBackground 20s ease-in-out infinite alternate;
+}
+
+/* Top Left Orb (Blue/Cool) */
+body::before {
+    background: radial-gradient(circle, #A1C4FD 0%, rgba(194, 233, 251, 0) 70%);
+    top: -10%;
+    left: -10%;
+}
+
+/* Bottom Right Orb (Pink/Warm) */
+body::after {
+    background: radial-gradient(circle, #fbc2eb 0%, rgba(166, 193, 238, 0) 70%);
+    bottom: -10%;
+    right: -10%;
+    animation-delay: -10s; /* Start halfway through to create contrast */
+}
+
+/* 2. The Animation */
+@keyframes floatBackground {
+    0% { 
+        transform: translate(0, 0) scale(1); 
+    }
+    50% { 
+        transform: translate(30px, 50px) scale(1.1); 
+    }
+    100% { 
+        transform: translate(-20px, 20px) scale(0.95); 
+    }
+}
+
+/* 3. Responsive Adjustments for Mobile */
+@media (max-width: 768px) {
+    body::before, body::after {
+        width: 80vw; /* Larger relative size on mobile to cover screen */
+        height: 80vw;
+        filter: blur(60px); /* Slightly less blur for performance */
+        opacity: 0.3;
+    }
 }
 
 a { 
@@ -2520,3 +2590,5 @@ input:checked + .slider:before {
     
     .ritual-title { font-size: 28px; }
 }
+
+
