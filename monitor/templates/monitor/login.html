@@ -29,6 +29,8 @@
         <div class="navbar-brand">LifeMonitor</div>
         <div class="nav-links">
             <a href="{% url 'home' %}" class="nav-item">Home</a>
+            <!-- Added Settings Button -->
+            <a href="{% url 'settings' %}" class="nav-item">Settings</a>
             {% if user.is_authenticated %}
                 <a href="{% url 'logout' %}" class="nav-item btn-logout">Logout</a>
             {% endif %}

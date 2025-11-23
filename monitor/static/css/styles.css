@@ -1785,3 +1785,205 @@ input:checked + .slider:before {
 .custom-options::-webkit-scrollbar { width: 4px; }
 .custom-options::-webkit-scrollbar-track { background: transparent; }
 .custom-options::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 4px; }
+
+
+/* ==========================================================================
+   16. iOS-Style Settings Layout (Refined)
+   ========================================================================== 
+*/
+
+.settings-container {
+    display: flex;
+    width: 95%;
+    max-width: 1200px;
+    height: 85vh; 
+    margin: 80px auto 0;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: saturate(180%) blur(40px);
+    -webkit-backdrop-filter: saturate(180%) blur(40px);
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+/* Sidebar styling */
+.settings-sidebar {
+    width: 280px;
+    background: rgba(242, 242, 247, 0.8); /* iOS Grouped Background color */
+    border-right: 1px solid rgba(60, 60, 67, 0.12);
+    padding: 30px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    flex-shrink: 0;
+}
+
+.settings-content {
+    flex: 1;
+    padding: 40px 50px;
+    overflow-y: auto;
+    position: relative;
+    background: white;
+}
+
+/* Tab Links */
+.tab-link {
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    text-align: left;
+    font-size: 16px;
+    color: var(--text-dark);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+}
+
+.tab-link i {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: white;
+}
+
+/* iOS Icon Colors */
+.tab-link:nth-child(2) i { background: #007AFF; } /* Profile Blue */
+.tab-link:nth-child(4) i { background: #34C759; } /* DB Green */
+.tab-link:nth-child(5) i { background: #8E8E93; } /* System Gray */
+
+.tab-link:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.tab-link.active {
+    background: rgba(0, 0, 0, 0.08);
+    font-weight: 600;
+}
+
+/* File Upload Area */
+.file-upload-wrapper {
+    border: 2px dashed #C7C7CC;
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #F2F2F7;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.file-upload-wrapper:hover {
+    border-color: var(--primary-color);
+    background: rgba(0, 122, 255, 0.05);
+}
+
+.file-upload-input {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Sidebar Toggle */
+.sidebar-toggle {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: white;
+    border: 1px solid rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    transition: transform 0.2s;
+    z-index: 10;
+    color: var(--primary-color);
+}
+
+.sidebar-toggle:hover {
+    transform: translateX(-50%) scale(1.1);
+}
+
+.settings-sidebar.collapsed { width: 80px; }
+.settings-sidebar.collapsed .tab-link span, 
+.settings-sidebar.collapsed .sidebar-label {
+    opacity: 0;
+    pointer-events: none;
+    display: none; 
+}
+.settings-sidebar.collapsed .tab-link { justify-content: center; }
+
+/* Modal refinements */
+.confirm-content {
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.modal-warning .confirm-icon { background: #FF9500; }
+.modal-error .confirm-icon { background: #FF3B30; }
+
+/* Responsive Adjustments */
+@media (max-width: 900px) {
+    .settings-container {
+        flex-direction: column;
+        height: 100vh; /* Full screen height on mobile */
+        width: 100%;
+        margin-top: 60px; /* Navbar offset */
+        border-radius: 0;
+        border: none;
+    }
+
+    .settings-sidebar {
+        width: 100% !important;
+        height: auto;
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 10px 15px;
+        border-right: none;
+        border-bottom: 1px solid rgba(0,0,0,0.1);
+        gap: 15px;
+    }
+
+    .settings-sidebar::-webkit-scrollbar { display: none; }
+
+    .tab-link {
+        padding: 8px 12px;
+        background: white;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        white-space: nowrap;
+    }
+    
+    .tab-link i { width: 24px; height: 24px; font-size: 12px; }
+    
+    .sidebar-label { display: none; } /* Hide headers on mobile nav */
+    
+    .sidebar-toggle { display: none; }
+
+    .settings-content {
+        padding: 20px;
+        padding-bottom: 80px; /* Space for bottom scroll */
+    }
+}

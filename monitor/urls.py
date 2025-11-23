@@ -13,6 +13,9 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('home/', views.home_view, name='home'),
     
+    # New Settings Page
+    path('settings/', views.settings_view, name='settings'),
+    
     path('input/', views.input_view, name='input'),
     path('chart/', views.chart_view, name='chart'),
     path('calendar/', views.calendar_view, name='calendar'),
